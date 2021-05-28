@@ -1,0 +1,318 @@
+/*
+ex1) 표준입력으로 두 개의 실수를 입력받아 두 수의 나누기를 구하여 출력하는 프로그램 작성
+
+ex2) 3+6, 3+6+9, 3+6+9+12의 계산 결과를 출력하는 프로그램을 작성하되, 덧셈 연산의 횟수를 최소화 하여 작성하기
+
+ex3) 두 수를 곱하는 매크로 MULT(x, y)를 정의하여 result = MULT(10, 20); 실행되도록 한 후, 그 결과를 출력하는 프로그램 작성
+      #define MULT(x,y) ((x)*(y))
+
+ex4) 다음 매크로 SQ2를 이용하여 네제곱 매크로 SQ4를 만들어, 임의의 정수를 입력받아 네제곱을 출력하는 프로그램 작성
+      #define SQ2(x) ((x)*(x))
+
+★ex5) 정수 천만 이하의 하나의 수를 입력받아 만, 천, 백, 십, 일 단위로 출력하는 프로그램 작성
+   ex)2347653 -> 234만 7천 6백 5십 3입니다. 
+
+-----------
+> 조건문
+1.if
+
+2. switch ~ case
+
+int c;
+
+switch(c) // c는 정수형만 가능하다. (enum형 변수와 같이 쓰인다.)
+{
+case 1:
+printf("c = 1\n");
+case 2:
+printf("c = 2\n");
+case 3:
+printf("c = 3\n");
+case 4:
+printf("c = 4\n");
+}
+
+3. break, continue (반복문이랑 많이 쓰인다.)
+
+>반복문
+1. for(n = 1; n < 10 ; n++)
+   {
+      body
+   }
+
+   n = 1; // 초기식
+2. while(n < 10) // vs do~while문 차이점은? 
+   {
+     body
+    n++; // 증감식
+   }
+
+   do
+   {
+      body // 최소 1번 실행.
+   }while(조건식)
+
+3. 둘의 차이점
+   for()문 : 반복 횟수를 정확히 알고 있을 때!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   while()문 : 정확한 반복 횟수를 알기 보다는, 어떤 시점!!!!!!!!!!!!!!이 존재할 때!!!!!
+
+   while(true)
+   {
+      ...
+      if(조건1)
+      {
+         ...
+         break;
+      }
+      i++;
+   }
+
+ex1) 양의 정수 하나 입력받아, 그 수만큼 "Hello World" 출력
+
+ex2) 양의 정수 하나 입력받아, 그 수만큼 3의 배수를 출력
+      ex) 5 -> 3 6 9 12 15
+#include<stdio.h>
+
+int main() {
+	int num;
+	printf("숫자 : ");
+	scanf_s("%d", &num);
+	for (int i = 1; i <= num ; i++) {
+		printf("%d ", i * 3);
+
+	}
+	return 0;
+}
+
+ex3) 사용자로부터 계속해서 정수를 입력 받는다.
+     그 값을 계속 더해 나간다.
+    만약 사용자가 '0'을 입력하면 그만하고, 모든 정수의 합을 출력하고 프로그램 종료.
+#include <stdio.h>
+
+int main() {
+	int num, sum=0;
+	while (1) {
+		printf("");
+		scanf_s("%d\n", &num);
+		if (num == 0) break;
+		sum = sum + num;
+	}
+	printf("합 : %d\n", sum);
+}
+ex4) 두 개의 정수를 입력받아, 두 정수를 포함하여 그 사이에 존재하는 정수들의 합을 계산해서 출력.
+      ex) 3,5 -> 12
+#include <stdio.h>
+
+int main() {
+	int num1, num2, sum = 0;;
+	printf("정수 : ");
+	scanf_s("%d %d", &num1, &num2);
+	for (int i = num1; i <= num2; i++)
+		sum += i;
+	printf("합은 : %d\n", sum);
+	return 0;
+
+}
+ex5) 사용자로부터 입력받은 숫자에 해당하는 구구단을 역순으로 출력.
+#include <stdio.h>
+
+int main() {
+	int num;
+	printf("숫자 : ");
+	scanf_s("%d", &num);
+
+	for (int i = 10; i > 0; i--) {
+		printf("%d * %d = %d\n", num, i, num * i);
+	}
+	return 0;
+}
+
+ex6) 이중 포문을 사용하여 1단 ~ 9단 까지 구구단을 출력(special : 짝수단만 출력)
+#include <stdio.h>
+
+int main() {
+	int num = 1;;
+	
+	for (int i = 1; i < 5; i++) {
+		num = i * 2;
+		for (int j = 1; j < 10; j++) {
+			printf("%d * %d = %d\n", num, j, num * j);
+		}
+	}
+
+	return 0;
+}
+ex7) 사용자에게 정수형 숫자 한개 입력받고, 입력받은 숫자가 '소수'인지 판단 하여 알려주기
+     (ex) 2,3,5,7...
+#include <stdio.h>
+
+int main() {
+	int num;
+	printf("");
+	scanf_s("%d",&num);
+	
+	
+	if (num % 2 == 0)
+		printf("소수가 아니다.\n");
+	else if (num % 3 == 0)
+		printf("소수가 아니다.\n");
+	else if (num % 5 == 0)
+		printf("소수가 아니다.\n");
+	else if (num % 7 == 0)
+		printf("소수가 아니다.\n");
+	else
+		printf("소수입니다.\n");
+
+
+	return 0;
+}
+
+ex8) 사용자에게 정수형 숫자 한개 입력받고, 2~입력받은 숫자 까지 모든 소수 출력
+#include <stdio.h>
+
+int main() {
+	int num;
+	printf("");
+	scanf_s("%d",&num);
+	
+	
+	if ((num!=2) &&(num % 2 == 0))
+		printf("소수가 아니다.\n");
+	else if ((num!=3)&&(num % 3 == 0))
+		printf("소수가 아니다.\n");
+	else if ((num!=5) && (num % 5 == 0))
+		printf("소수가 아니다.\n");
+	else if ((num!=7) && num % 7 == 0)
+		printf("소수가 아니다.\n");
+	else
+		printf("소수입니다.\n");
+
+
+	return 0;
+}
+
+ex9) 아래의 출력을 보이는 프로그램 작성.
+      *
+      0*
+      00*
+      000*
+      0000*
+*/
+
+#include <stdio.h>
+
+#pragma warning(disable:4996)
+
+void exam1(void);
+void exam2(void);
+void exam3(void);
+void exam4(void);
+void exam5(void);
+void test(void);
+
+int main(void)
+{
+   //exam1();
+   //exam2();
+   //exam3();
+   //exam4();
+   //exam5();
+   test();
+
+   return 0;
+}
+
+void test(void)
+{
+   int c;
+
+   printf("c : ");
+   scanf("%d", &c);
+
+   switch (c)
+   {
+   case 1:
+      printf("c = 1\n");
+      break;
+   case 2:
+      printf("c = 2\n");
+      break;
+   case 3:
+      printf("c = 3\n");
+      break;
+   case 4:
+      printf("c = 4\n");
+      break;
+   default:
+      printf("default\n");
+   }
+
+}
+
+
+
+//ex1) 표준입력으로 두 개의 실수를 입력받아 두 수의 나누기를 구하여 출력하는 프로그램 작성
+//void exam1(void)
+//{
+//   double dnum1,dnum2;
+//
+//   printf("실수 : ");
+//   scanf("%lf %lf", &dnum1, &dnum2);
+//
+//   printf("%lf / %lf = %.2lf\n", dnum1, dnum2, dnum1 / dnum2);
+//
+//
+//}
+
+//ex2) 3 + 6, 3 + 6 + 9, 3 + 6 + 9 + 12의 계산 결과를 출력하는 프로그램을 작성하되, 덧셈 연산의 횟수를 최소화 하여 작성하기
+//void exam2(void)
+//{
+//   int x = 3 + 6; // 1회
+//
+//   printf("%d + %d = %d\n", 3,6,x );
+//   x += 9; // x = x + 9;
+//   printf("%d + %d + %d= %d\n", 3,6,9,x);
+//   x += 12; 
+//   printf("%d + %d + %d + %d = %d\n", 3, 6, 9, 12, x);
+//}
+
+//ex3) 두 수를 곱하는 매크로 MULT(x, y)를 정의하여 result = MULT(10, 20); 실행되도록 한 후, 그 결과를 출력하는 프로그램 작성
+      //#define MULT(x,y) ((x)*(y))
+//void exam3(void)
+//{
+//   printf("result = %d\n", MULT(10, 20));
+//}
+
+//ex4) 다음 매크로 SQ2를 이용하여 네제곱 매크로 SQ4를 만들어, 임의의 정수를 입력받아 네제곱을 출력하는 프로그램 작성
+      //#define SQ2(x) ((x)*(x))
+
+//#define SQ2(x) ((x)*(x))
+//#define SQ4(x) (SQ2(x)*SQ2(x))
+//
+//void exam4(void)
+//{
+//   int x;
+//   printf("정수 = ");
+//   scanf("%d", &x);
+//   printf("네제곱 = %d\n", SQ4(x));
+//}
+
+//★ex5) 정수 천만 이하의 하나의 수를 입력받아 만, 천, 백, 십, 일 단위로 출력하는 프로그램 작성
+      //ex)234 7653 -> 234만 7천 6백 5십 3입니다. 
+//void exam5(void)
+//{
+//   int x;
+//
+//   printf("수 =");
+//   scanf("%d", &x);
+//
+//   printf("%d만", x / 10000); // 12 3456
+//   x = x % 10000; // 3456
+//   printf("%d천", x/1000); // 3 456
+//   x = x % 1000;
+//   printf("%d백", x/100);
+//   x = x % 100;
+//   printf("%d십", x / 10);
+//   x = x % 10;
+//   printf("%d", x);
+//}
