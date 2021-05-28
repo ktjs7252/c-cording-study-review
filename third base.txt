@@ -1,0 +1,230 @@
+ex0) 정수 천만 이하의 하나의 수를 입력받아 만, 천, 백, 십, 일 단위로 출력하는 프로그램 작성
+   ex)2347653 -> 234만 7천 6백 5십 3입니다.
+#include <stdio.h>
+
+int main() {
+	int num;
+	printf("정수 : ");
+	scanf_s("%d", &num);
+
+	printf("%d만", num / 10000);
+	num = num % 10000;
+	printf("%d천", num / 1000);
+	num = num % 1000;
+	printf("%d백", num / 100);
+	num = num % 100;
+	printf("%d십", num / 10);
+	num = num % 10;
+	printf("%d", num);
+
+	return 0;
+
+ }
+
+ex1) 양의 정수 하나 입력받아, 그 수만큼 "Hello World" 출력
+
+ex2) 양의 정수 하나 입력받아, 그 수만큼 3의 배수를 출력
+      ex) 5 -> 3 6 9 12 15
+
+
+ex3) 사용자로부터 계속해서 정수를 입력 받는다.
+    그 값을 계속 더해 나간다.
+    만약 사용자가 '0'을 입력하면 그만하고, 모든 정수의 합을 출력하고 프로그램 종료.
+
+#include <stdio.h>
+
+int main() {
+	int num, sum = 0;;
+	
+	while (1) {
+		printf("정수 : ");
+		scanf_s("%d", &num);
+		if (num == 0) break;
+		sum += num;
+	}
+	printf("합은 : %d\n", sum);
+	return 0;
+
+ }
+
+ex4) 두 개의 정수를 입력받아, 두 정수를 포함하여 그 사이에 존재하는 정수들의 합을 계산해서 출력.
+      ex) 3,5 -> 12
+#include <stdio.h>
+
+int main() {
+	int num1,num2,i,sum=0;
+	printf("정수 : ");
+	scanf_s("%d %d", &num1, &num2);
+	for (i = num1; i <= num2; i++) {
+		sum += i;
+	}
+	printf("합은 %d", sum);
+	return 0;
+
+
+ }
+
+ex5) 사용자로부터 입력받은 숫자에 해당하는 구구단을 역순으로 출력.
+
+ex6) 이중 포문을 사용하여 1단 ~ 9단 까지 구구단을 출력(special : 짝수단만 출력)
+#include <stdio.h>
+
+int main() {
+	int i, j;
+	for (i = 2; i <10; i+=2) {
+		for (j = 1; j <= 10; j++)
+			printf("%d * %d = %d\n", i, j, i * j);
+	}
+
+
+ }
+ex7) 사용자에게 정수형 숫자 한개 입력받고, 입력받은 숫자가 '소수'인지 판단 하여 알려주기
+    (ex) 2,3,5,7...
+
+
+
+
+#include <stdio.h>
+
+int main() {
+	int num, i,signal =2;
+	printf("정수 : ");
+	scanf_s("%d", &num);
+
+	for (i = 2; i < num; i++) {
+		if (num % i == 0) {
+			printf("소수가 아니다.");
+			signal = 1; 
+                                        break;
+		}
+		
+	}
+	if (signal == 2)
+		printf("소수이다");
+	return 0;
+	
+
+ }
+ex8) 사용자에게 정수형 숫자 한개 입력받고, 2~입력받은 숫자 까지 모든 소수 출력
+#include <stdio.h>
+
+
+
+int main() {
+	int num, i, j;
+	printf("정수 : ");
+	scanf_s("%d", &num);
+
+	for (i = 2; i <= num; i++) {
+
+		for (j = 2; j < i ; j++)
+			if (i % j == 0)
+				break;
+		if (i == j) {
+			printf("%d ", i);
+	}
+	}
+	return 0;
+}
+ex9) 아래의 출력을 보이는 프로그램 작성.
+      *
+      0*
+      00*
+      000*
+      0000*
+
+#include <stdio.h>
+
+int main() {
+    int i, j;
+
+    for (i = 0; i < 5; i++) {
+        
+        for (j = 0; j < i; j++) {
+            printf("0");
+        }
+        printf("*\n");
+    }
+
+
+-----------------------------------------------------------------------------------
+ex1) 1이상 100미만 정수 중에서 7의 배수와 9의 배수를 출력.
+     단, 7의 배수이면서 동시에 9의 배수인 정수는 한번만 출력!
+#include <stdio.h>
+
+int main() {
+	int i, num;
+
+	for (i = 1; i <= 100; i++)
+		if ((i % 7 == 0) || (i % 9 == 0))
+			printf("%d ",i);
+
+}
+
+ex2) 두 개의 정수를 입력 받아서, 두 수의 차를 출력.
+     단, 무조건 큰 수에서 작은 수를 빼야 한다. (출력 결과는 무조건 0이상)
+#include <stdio.h>
+
+int main() {
+	
+	int num1, num2;
+	printf("");
+	scanf_s("%d %d", &num1, &num2);
+
+	if (num1 >= num2)
+		printf("차는 %d\n", num1 - num2);
+	else if (num1 <= num2)
+		printf("차는 %d\n", num2 - num1);
+
+}
+
+ex3) 학생의 전체 평균점수에 대한 학점을 출력하는 프로그램 작성.
+     국어,영어,수학 점수를 입력받아서, 평균을 구한다. 
+     평균이 90점이상이면, A
+    80점 이상이면 B 
+    70점 이상이면 C
+    50점 이상이면 D
+    그 미만은 F.
+#include <stdio.h>
+
+int main() {
+	
+	int korean, english, math,sum;
+	printf("국어, 영어, 수학 : ");
+	scanf_s("%d %d %d", &korean, &english, &math);
+	
+	sum = (korean + english + math) / 3;
+	
+	if (sum >= 90)
+		printf("A");
+	else if (sum >= 80 && sum<90)
+		printf("B");
+	else if (sum >= 70 && sum <80)
+		printf("C");
+	else if (sum >= 50 && sum<70)
+		printf("D");
+	else if (sum <50)
+		printf("F");
+
+}
+   
+ex4) 다음 식을 만족하는 모든 (A,Z)를 구하는 프로그램 작성.
+      AZ
+   + ZA
+   ----
+     99
+#include <stdio.h>
+int main() {
+
+	int a, z, sum;
+
+
+
+	for (a = 1; a <= 9; a++) {
+		for (z = 1; z <= 9; z++) {
+
+			if ((10 * a + z) + (10 * z + a) == 99)
+			printf("(%d,%d)\n", a, z);
+		}
+	}
+}
