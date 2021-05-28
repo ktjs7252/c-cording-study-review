@@ -113,29 +113,26 @@ ex2) 내가 가진 돈 3500원, 크림빵(500원), 새우깡(700원), 콜라(400
     크림빵 4개, 새우깡 1개, 콜라 2개
     어떻게 구입하실래요?
 
-#include <stdio.h>
+#include<stdio.h>
+int main()
+{
+	int money, cream=500, fish=700, coke=400;
+	int i, j, k;
 
-int main() {
-
-	int cream, fish, coke;
-	int money;
-
-	printf("내가 가진돈 : ");
+	printf("돈 : ");
 	scanf_s("%d", &money);
 
-	int i, j, z;
-
-	for (i = 1; i < 10; i++) {
-		for (j = 1; j < 10; j++) {
-			for (z = 1; z < 10; z++) {
-				if (money == (i * 500) + (j * 700) + (z * 400))
-					printf(" 크림빵 %d개, 새우깡 %d개, 콜라 %d개\n", i, j, z);
+	for (i = 1; i < (money / cream); i++) {
+		for (j = 1; j < (money / fish); j++) {
+		for (k = 1; k < (money / coke); k++) {
+			if (money == (i * cream) + (j * fish) + (k * coke))
+			{
+				printf("크림빵 %d개 새우깡 %d개 콜라 %d개\n", i, j, k);
+			}
 			}
 		}
 	}
-	return 0;
-
-
+		return 0;
 }
 
 
