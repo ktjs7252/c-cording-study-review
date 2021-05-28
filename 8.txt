@@ -1,0 +1,136 @@
+/*
+>포인터(변수)
+
+- 포인터 변수란? (1) 주소값(&)을 저장해서 (2) '어디서든' 접근(*) 하기 위해 존재한다.
+  - 포인터 형은 메모리 공간을 참조하는 기준이 된다. 
+     - int* p : 접근(*)할 때, int형 포인터이므로, p에 저장된 주소를 시작으로 4바이트 읽어들여서 정수로 해석
+    - double* p : 접근(*)할 때, double형 포인터이므로, p에 저장된 주소를 시작으로 8바이트 읽어들여서 실수로 해석.
+     - 그래서 포인터 변수 자료형과, 저장할 변수 자료형을 맞춰줘야 문제 없다. 
+  
+  ex1) 변수의 관계를 그림 그려 설명 + 출력 결과 예상
+       int num = 10;
+      int* p1 = &num;
+      int* p2 = p1;
+
+      (*p1)++;
+      (*p2)++;
+      printf("%d\n", num);
+
+
+>포인터 & 배열 이해
+
+- 배열의 이름이 의미하는 것은?
+  - 배열의 이름은 배열의 (시작 주소)를 의미하며, 그 형태는 상수이다. 
+  - 이는 곧, 배열의 이름이 '상수 형태의 포인터'
+  - 배열의 이름도 포인터이기 때문에, 배열의 이름으로 * 연산이 가능하다!
+  ex) int arr[3] = {1,2,3};
+      printf("%d\n", *arr);
+     *arr += 100;
+     printf("%d\n", arr[0]);
+
+- 포인터를 배열 이름처럼 사용할 수 있다. 
+  ex) int arr[3] = {1,2,3};
+      int* p = arr; // int* p = &arr[0] 과 같은 문장.
+
+     printf("%d %d\n", p[0], arr[0]);
+     printf("%d %d\n", p[1], arr[1]);
+
+- 포인터 연산
+    int arr[5] = { 11, 22, 33, 44, 55 };
+    int *p1;
+    int *p2;
+    int *p3;
+
+    p1 = arr;    // 배열 첫 번째 요소의 메모리 주소를 포인터에 저장
+
+    p2 = p1 + 1;    // 포인터 연산
+    p3 = p1 + 2;    // 포인터 연산
+    
+    printf("%p\n", p1); // %p : 포인터의 현재 갖고 있는 주소 값을 16진수 형태로 출력해줌.("%0X"와 같음)
+    printf("%p\n", p2);    
+    printf("%p\n", p3);    
+
+- 중요한 결론!!! arr[i] = *(arr+i)
+  int arr[3] = {11,22,33};
+  int* p = arr;
+  printf("%d %d %d\n", *p, *(p+1), *(p+2); // p[0], p[1], p[2]
+
+  ex1) int arr[5] = {1,2,3,4,5};
+       int* p;
+       이 때, p 변수를 사용해서 arr배열의 값들을 전부 10씩 증가시키고, p 변수를 이용해 출력. 
+
+  ex2) int arr[5] = {1,2,3,4,5};
+       int* p = &arr[4]; 
+       이 때, p 변수를 이용해서, arr배열의 값들을 전부 저장해서, 그 결과를 출력.
+
+  ex3) int arr[6] = {1,2,3,4,5,6};
+       int* front = &arr[0];
+       int* end = &arr[5]; 
+       이 때, front와 end 변수 2개를 활용해, arr에 저장된 값을 {6,5,4,3,2,1}로 순서를 변경하고 출력. 
+
+
+- 두 가지 형태의 문자열 표현
+  1. char str1[] = "My string"; // 배열 길이 자동 계산
+  2. char* str2 = "Your string"; // 메모리 공간에 문자열 "Your string" 저장되고, 첫번째 문자 Y의 주소값이 반환되서 str2에 저장. 
+     - 이 2가지 선언의 메모리 구조 적 차이는?
+       1. [M][y][][S][t][r][i][n][g][\0] (배열 형태 str1)
+       2. *str2 -------> [Your string\0] (자동 할당된 문자열, 상수형태)
+
+  ex) char str1[] = "My string";
+      char* str2 = "Your string"; 
+      printf("%s %s\n", str1, str2);
+
+      str2 = "Our string";
+      printf("%s %s\n", str1, str2);
+
+      str1[0] = 'X';
+      str2[0] = 'X'; // 컴파일러에 따라서, 실행은 될 수 있지만, 런타임 ERROR, 결국 틀린 문장.
+      printf("%s %s\n", str1, str2);
+ 
+- 포인터 변수로 이루어진 배열 : 포인터 배열
+  ex) int n1=10, n2=20, n3=30;
+      int* arr[3] = {&n1, &n2, &n3}; // 길이가 3인, int형 포인터 배열 arr
+
+      printf("%d\n", *arr[0]);
+      printf("%d\n", *arr[1]);
+      printf("%d\n", *arr[2]);
+
+  - 문자열을 저장하는 포인터 배열
+  ex) char* strarr[3] = {"Simple", "String", "Array"}; // 길이가 3인 char형 포인터 배열 strarr
+      printf("%s\n", strarr[0]);
+      printf("%s\n", strarr[1]);
+      printf("%s\n", strarr[2]);
+
+
+>포인터 & 함수의 관계
+- call-by-value vs call-by-reference.
+
+- SWAP() 예제 이해하기
+
+*/
+
+/*
+ex2) int arr[5] = {1,2,3,4,5};
+       int* p = &arr[4];
+       이 때, p 변수를 이용해서, arr배열의 값들을 전부 합해서, 그 결과를 출력.
+
+*/
+#include <stdio.h>
+
+#pragma warning(disable:4996)
+
+int main()
+{
+    int arr[5] = { 1,2,3,4,5 }; // [0] ~ [4]
+    int* p = &arr[4]; 
+    int sum = 0;
+    int i;
+
+    for (i = 0; i < 5;i++) 
+    {
+        sum += *(p--); // *(p - i);
+    }
+    printf("%d", sum);
+
+    return 0;
+}
