@@ -167,29 +167,30 @@ ex3) 크기가 10인 배열을 선언하고, 10개의 정수를 입력받자.
      배열 크기는 포인터로 전달한다.
      (중복된 값을 삭제할 때는, 해당 값 이후의 값을 앞으로 한칸씩 당긴다.)
 #include <stdio.h>
-int EDuplicate(int* p, int* len)
+int EDuplicate(int* p, int* length)
 {
 	int i, j,idx=0;
-	int tmp[10] = 0;
-	int score = 0;
+	int tmp[10];
 
-	for (i = 0; i < len; i++)
-	{
-
+	for (i = 0; i < *length; i++) {
+		for (j = i + 1; j < *length; j++) {
+			if (p[i] == p[j]) {
+				p[j] = -1;
+			}
+		}
 	}
 
-	while (tmp[idx] != '\0')
-	{
-		score++;
+	for (i = 0; i < *length; i++) {
+		if (p[i] != -1) {
+			tmp[idx] = p[i];
+			idx++;
+		}
 	}
-	
-	len = score;
 
-	for (i = 0; i < len; i++)
-	{
+	for (i = 0; i < idx; i++) {
 		p[i] = tmp[i];
 	}
-
+	*length = idx;
 
 }
 int main()
@@ -197,17 +198,14 @@ int main()
 	int arr[10];
 	int i,length=10;
 
-	for (i = 0; i < length; i++)
-	{
+	for (i = 0; i < 10; i++) {
 		scanf_s("%d", &arr[i]);
 	}
-	
+
 	EDuplicate(arr, &length);
 
-
-	for (i = 0; i < length; i++)
-	{
-		printf("%d ", arr[i]);
+	for (i = 0; i < length; i++) {
+		printf("%d ",arr[i]);
 	}
 	return 0;
 }
