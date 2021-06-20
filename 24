@@ -1,0 +1,185 @@
+/*
+>문자와 문자열 관련함수
+-입력 & 출력 => 프로그램의 흐름
+-프로그램 중심, 프로그램 안으로 데이터가 들어오는 것 : 입력 - ex) 키보드, 파일(.txt / binary 파일 (txt가 아닌 것)
+-프로그램 밖으로 데이터가 흘러 나가는 것 : 출력 - ex) 모니터, 파일
+
+  > 문자 출력 함수
+  - int putchar(int c);
+  - int fputc(int c, FILE* stream); // stdout : 모니터
+    -> 호출 성공시 쓰여진 문자정보가, 실패시 EOF 반환 (end of file, -1)
+
+  > 문자 입력 함수 
+  - int getchar(void);
+  - int fgetc(FILE* stream); // stdin : 키보드
+    -> 파일 끝에 도달하거나, 함수 호출 실패시 EOF 반환 (end of file, -1)
+
+  ex) int ch1, ch2; // unsigned char -> 어떤 컴파일러 내부적으로.
+
+      ch1 = getchar(); // 문자 입력
+      ch2 = fgetc("a.txt"); // 엔터 키 입력
+      
+      putchar(ch1); // 문자 출력
+      fputc(ch2, stdout); // 엔터 키 출력
+
+  - 왜 문자 입력 받는데, int형 썼을까? 
+    - EOF(-1)을 '컴파일러' 종류에 상관없이 잘 받으려고.
+    - 어떤 컴파일러는 char형을 unsigned char로 처리한다. (=> 부호없는 char형)
+      - 이런 컴파일러는 -1을 제대로 읽지 못한다. 따라서 코드는 int로 작성하는게, 컴파일러 환경에 구애받지 않는다!
+
+  - EOF? 이렇게 약속 되어 있다!
+    - 함수 호출 실패.
+    - 파일의 끝.
+    - Window : ctrl+z
+    - Linux  : ctrl+d
+
+    ex) int ch;
+
+        while (1)
+        {
+           ch = getchar();
+           if (ch == EOF)
+              break;
+           putchar(ch);
+        }
+
+ ex1) 프로그램 사용자로부터 알파벳 문자 하나 입력받고, 대문자면 -> 소문자, 
+      소문자면 -> 대문자로 변환해서 출력하는 프로그램 작성.
+      단, getchar(), putchar() 사용해보기.
+      알파벳 이외의 문자 입력하는 경우, 오류메시지 간단히 출력.
+
+
+> 문자열 입출력 함수
+
+   > 문자열 출력 함수 
+   - int puts(const char* s); // 항상 모니터(stdout)으로 출력.
+   - int fputs(const char*s, FILE* stream);
+     -> 성공시 음수 아닌 값, 실패시 EOF 반환
+
+   > 문자열 입력 함수 
+   - char* gets(char* s);
+   - char* fgets(char*s, int n, FILE* stream); // 엔터('\n') 만날 때까지 문자열을 읽어들인다. 중간에 공백문자 삽입도 읽을 수 있음!. scanf("%s")는 공백 기준이라 불가능. 
+     -> 파일 끝에 도달하거나, 함수호출 실패 시 NULL 포인터 반환.
+
+   ex) char str[7];
+       fgets(str, sizeof(str), stdin); // stdin으로 부터 문자열 입력.
+       -> stdin으로 부터 문자열 입력 받아서, 배열 str에 저장해라, 대신 sizeof(str) 길이 만큼만 저장해라.
+
+       ex) char str[7];
+           int i;
+
+           for (i = 0 ; i < 3 ; i++)
+           {
+              fgets(str, sizeof(str), stdin); // 널문자 빼고 6개만 읽어들임.
+              printf("Read %d: %s\n", i+1, str);
+           }
+
+> 표준 입출력 버퍼
+          (엔터키)   (fputs, puts)
+  - 프로그램 --> 출력버퍼 --> 모니터
+  - 프로그램 <-- 입력버퍼 <-- 키보드 
+       (fgets,gets))   (엔터키)
+
+  - 버퍼링(Buffering) 하는 이유는?
+    - 데이터 전송의 효율성 위해
+    - 중간에 버퍼를 둬서 데이터를 한데 묶어서 이동시키는 것이 효율적이고 빠름.
+      - 손으로 하나씩 vs 수레 가득 채워서
+
+
+> 입출력 이외의 문자열 관련 함수
+  - size_t strlen(const char* s);
+    -> 전달된 문자열 길이 반환, 널문자는 길이에서 제외!
+  
+  - char* strcpy(char* dest, const char* src);
+  - char* strncpy(char* dest, const char* src, size_t n);
+    -> 복사된 문자열의 주소 값 반환.
+
+    ex) char str1[30] = "Hello world";
+        char str2[30];
+        strcpy(str2, str1);
+        strncpy(str2, str1, sizeof(str2));
+        -> 주의해야할 점!
+        -> 널 문자!!
+        -> 문자열은 항상 널('\0') 문자 신경써줘야 함!!
+
+  - char* strcat(char* dest, const char* src);
+  - char* strncat(char* dest, const char* src, size_t n);
+    -> 덧붙여진 문자열의 주소 값 반환.
+
+    ex) char str1[30] = "First~";
+        char str2[30] = "Second";
+
+        strcat(str1, str2); // str1 뒤에 str2 복사. 정확히, str1의 널문자부터 이어붙임.
+
+        strncat(str1, str2, 8); // str2 문자열 중 최대 8개를 str1 뒤에 붙여라!
+
+  - int strcmp(const char* s1, const char* s2);
+  - int strncmp(const char* s1, const char* s2, size_t n);
+    -> 두 문자열 내용이 같으면 0, 같지 않으면 s1-s2 의 결과라 생각하면 됨. (크고 작음은 아스키 코드 기준)
+                                s1 > s2 : 0보다 큰 값
+                                s1 < s2 : 0보다 작은 값.
+    ex) "ABCD" vs "ABCC"
+        첫 번째 문자부터 비교.
+        printf("%d\n", strcmp("ABCD", "ABCC"));
+        0보다 크거나, 작거나 만 정해져있지, 어떤 값이 반환되는진 정해져있지 않다. 
+
+        "ABCD" vs "ABCDE"
+
+
+ex1) 문자열 입력 받아서, 그안에 존재하는 숫자의 총합을 계산해서 출력
+      "A15#43"
+      13
+
+ex2) char str1[20];
+     char str2[20];
+     char str3[20];
+
+     str1, str2를 fgets 함수 호출을 통해 입력.
+     str1을 str3에 복사. str2를 str3에 이어붙이고, str3에 저장된 문자열 출력.
+
+     hint) fgets() 함수로 문자열 읽어 들이면 '\n'문자도 같이 읽혀진다. 이를 문자열 일부가 되지 않도록 해야 한다. 
+           str1, str2에 저장된 '\n' 처리가 중요.
+
+
+ex3) 두 명의 이름, 나이 정보를 입력받자. 
+     그리고, 이 두사람의 이름&나이가 동일한지 아닌지 판단해서 알려주기.
+     단, 이름은 영어/한글 모두 가능하고, 길이는 최대 20까지 가능하다. 
+     "홍길동 33"
+     "김길동 32" 
+
+
+
+>구조체 & 구조체 포인터.
+
+>메모리 관리 & 동적할당
+
+>END
+
+>C 전체 복습
+
+>자료구조 (21.06 ~ 21.09) 3개월
+ => 현실의 데이터(자료)를 컴퓨터에 어떻게 표현/저장 할 것인가? 고민한 학문 => 자료구조
+ - 스택
+ - 큐
+ - 리스트
+ - 트리
+
+>알고리즘 (21.10 ~ 22.03) 6개월
+ => 현실의 데이터(자료)를 바탕으로, 어떠한 문제를 해결하는 학문.
+ - DP(Dynamic Programming)
+ - DFS
+ - BFS
+*/
+
+/*
+*/
+#include <stdio.h>
+#include <string.h>
+
+#pragma warning(disable:4996)
+
+int main()
+{
+
+    return 0;
+}
