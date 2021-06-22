@@ -1,0 +1,201 @@
+/*
+ex1) 문자열 입력 받아서, 그안에 존재하는 숫자의 총합을 계산해서 출력
+      "A15#43"
+      13
+
+      1) 문자형 숫자 '3' - '0' => 정수형 숫자 3이 된다.
+         -> 문자 하나하나를 정수형으로 바꿀 때,
+      2) atoi(char*) -> 매개변수 문자열이 숫자로 바뀐다.
+         -> 문자열 자체를 정수형으로 바꾼다.(통으로) "123" -> 123
+
+ex2) char str1[20];
+     char str2[20];
+     char str3[20];
+
+     str1, str2를 fgets 함수 호출을 통해 입력.
+     str1을 str3에 복사. str2를 str3에 이어붙이고, str3에 저장된 문자열 출력.
+
+     hint) fgets() 함수로 문자열 읽어 들이면 '\n'문자도 같이 읽혀진다. 이를 문자열 일부가 되지 않도록 해야 한다.
+           str1, str2에 저장된 '\n' 처리가 중요.
+
+
+ex3) 두 명의 이름, 나이 정보를 입력받자.
+     그리고, 이 두사람의 이름&나이가 동일한지 아닌지 판단해서 알려주기.
+     단, 이름은 영어/한글 모두 가능하고, 길이는 최대 20까지 가능하다.
+     "홍길동 33"
+     "김길동 32"
+     int main()
+{
+    char p1[20];
+    char p2[20];
+    int i=0, j=0;
+    char name1[20];
+    char name2[20];
+    int age1;
+    int age2;
+
+    gets(p1);
+    gets(p2);
+
+    while (p1[i] != ' ')
+    {
+        i++;
+    } // [i] = ' '
+
+    p1[i] = '\0'; // "abc\010\0"
+    strcpy(name1, p1);
+    age1 = atoi(&p1[i + 1]);
+
+    while (p2[j] != ' ')
+    {
+        j++;
+    } // [j] = ' '
+
+    p2[j] = '\0';
+    strcpy(name2, p2);
+    age2 = atoi(&p2[j + 1]);
+
+    if (strcmp(name1, name2) == 0)
+    {
+        puts("이름이 같다");
+    }
+    else
+    {
+        puts("이름이 다르다");
+    }
+
+    if (age1 == age2)
+    {
+        puts("나이가 같다.");
+    }
+    else
+    {
+        puts("나이가 다르다.");
+    }
+
+
+    return 0;
+}
+
+
+
+>구조체 & 구조체 포인터.
+
+- 구조체란?
+   - 하나 이상의 변수(포인터 변수&배열 포함)를 묶어서 새로운 자료형을 정의하는 방법.
+   - struct point
+     {  
+        int xpos;
+        int ypos;
+     }
+   - struct point pos1;
+   - pos1.xpos = 20;
+   
+   - struct person
+     {
+       char name[20];
+       char phoneNum[20];
+       int age;
+     }
+   - struct person person1;
+   - strcpy(person1.name, "홍길동");
+   - printf("%s\n", person1.name);
+
+   -> 변수 선언하는 방법만 좀 바뀌었다 뿐이지, scanf()/printf() 모든 것이 우리가 아는 자료형과 똑같다.
+
+ex1) 문자열 형태의 '종업원 이름', '주민등록번호', 정수 형태의 '급여정보'를 저장할 수 있는, 
+     employee 이름의 구조체를 정의하자.
+     그리고 이 변수를 하나 선언해서, 사용자가 입력하는 정보로 변수를 채우고, 데이터 출력해보자.
+
+
+- 구조체 변수 초기화
+  - struct point pos = {10, 20};
+  - struct person man = {"홍길동", "010-1234-1234", 21}; 
+    -> 초기화 과정에서는, 문자열 저장을 위해 strcpy 함수를 호출하지 않아도 된다!
+
+
+- 구조체 배열 & 포인터
+  - int형 변수, int num -> int arr[10];
+  - point형 변수, struct point pos -> struct point arr[10];
+
+ex2) 크기가 5인 point 구조체 배열을 선언하고, 사용자로 부터 5개의 (x,y) 지점을 입력받자. 
+
+
+
+>메모리 관리 & 동적할당
+
+>END
+
+>C 전체 복습
+
+>자료구조 (21.06 ~ 21.09) 3개월
+ => 현실의 데이터(자료)를 컴퓨터에 어떻게 표현/저장 할 것인가? 고민한 학문 => 자료구조
+ - 스택
+ - 큐
+ - 리스트
+ - 트리
+
+>알고리즘 (21.10 ~ 22.03) 6개월
+ => 현실의 데이터(자료)를 바탕으로, 어떠한 문제를 해결하는 학문.
+ - DP(Dynamic Programming)
+ - DFS
+ - BFS
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#pragma warning(disable:4996)
+
+int main()
+{
+    int arr[100][100] = { 0, };
+    int T, h, w, n;
+    int i, j, k, score, x, y;
+    scanf("%d", &T);
+
+    for (k = 0; k < T; k++)
+    {
+
+        score = 1;
+        scanf("%d %d %d", &h, &w, &n);
+
+        for (i = 1; i <= h; i++)
+        {
+            for (j = 1; j <= w; j++)
+            {
+                if (score == n) {
+                    break;
+                }
+                else {
+                    arr[j][i] = score++;
+                }
+            }
+
+        }
+
+
+        for (x = 1; x <= h; x++)
+        {
+            for (y = 1; y <= w; y++)
+            {
+                if (arr[x][y] == n)
+                {
+                    if (y < 10)
+                    {
+                        printf("%d0%d\n", x, y);
+                    }
+                    else
+                    {
+                        printf("%d%d\n", x, y);
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    return 0;
+}
