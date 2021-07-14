@@ -1,0 +1,478 @@
+/*
+13. 네 개의 문자열(단어)을 입력 받아서, 사전편찬 순서대로 정렬된 하나의 문자열을 구성하고, 출력하는 프로그램 작성.
+    (단, 2차원 배열 사용하지 않고, char arr[20] 4개와, char result[80]로 선언.)
+    (문자열 이어붙이기 : strcat())
+
+    ex) 문자열 입력 1 : CCC
+        문자열 입력 2 : AAA
+        문자열 입력 3 : BBB
+        문자열 입력 4 : DDD
+        정렬된 문자열 : AAA BBB CCC DDD
+
+15. 정수 나눗셈의 연산 결과로 몫과 나머지를 반환하는 함수, DivInt()를 정의하자.
+    DivInt() 함수는 정수 나눗셈의 결과로 몫과 나머지 두가지를 반환해야 하는데,
+    return에 의한 반환이 아닌, 매개 변수 전달을 통한 값의 반환이 이뤄지도록 하자. (call-by-reference)
+    ex) 두 정수 입력 : 7 0
+        0으로 나누는 오류 발생, 숫자 재 입력
+
+        두 정수 입력 : 5 2
+        몫 : 2, 나머지 : 1
+
+
+16. 2차원 배열을 인자로 전달받아서, 배열에 저장된 모든 요소의 합을 계산하여 반환하는 함수를 정의하자.
+    int arr1[2][2] = {1,3,5,7};
+    int arr2[2][3] = {1,2,3,4,5,6};
+
+
+
+17. 아래의 실행 예제 프로그램 작성.
+    단, 문자열에서 문자의 갯수를 세는 함수 CountCharNum()을 정의해서 main에서 활용하자.
+    ex) 문자열 입력 : Ha! Ha! Ha!
+        세어 볼 문자 : a
+        a의 개수 : 3
+
+
+
+18. 문자열 처리함수 직접 만들어보기.
+    1. 문자열 길이 반환    : int strLen(char* str) 
+    2. 문자열 복사 함수    : int strCpy(char* dest, char* src)  // 복사한 문자열 길이 반환
+    3. 문자열 덧붙이기     : int strCat(char* dest, char* src)  // 덧붙여진 문자열 최종 길이 반환
+    4. 두 개의 문자열 비교 : int strCmp(char* str1, char* str2) // 같으면 0, str1이 사전편찬 더 빠르면 -1, str2가 더 빠르면 1
+
+
+19. 도서 정보 구조체를 정의하고, 이를 활용해 데이터를 입력 받고 출력해보자.
+    저장할 데이터는 : 도서이름, 출판사, 가격 3가지 정보이다. 
+    (총 3개의 데이터 입력 및 출력)
+    ex) 1번째 도서 정보 입력 : 
+        도서 제목 :
+        출판사 명 : 
+        도서 가격 :
+        1번째 입력 완료
+
+        ...
+
+        *도서 정보 출력*
+        1번째 도서 정보 출력 :
+        ...
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#pragma warning(disable:4996)
+typedef struct
+{
+	char title[20];
+	char publish[20];
+	int price;
+}book;
+int main()
+{
+	book arr[4];
+	int i;
+
+	for (i = 1; i < 4; i++)
+	{
+		printf("%d번째 도서 정보 입력 : \n",i);
+		printf("도서제목 : ");
+		scanf("%s", &arr[i].title);
+		printf("출판사 명 : ");
+		scanf("%s", &arr[i].publish);
+		printf("도서가격 : ");
+		scanf("%d", &arr[i].price);
+		printf("%d번쨰 입력 완료\n",i);
+		printf("\n");
+	}
+	printf("도서 정보 출력\n");
+	for (i = 1; i < 4; i++)
+	{
+		printf("%d번째 도서 정보 출력 : \n",i);
+		printf("도서제목 :%s\n",arr[i].title);
+		printf("출판사 명 :%s\n ",arr[i].publish);
+		printf("도서가격 : %d\n",arr[i].price);
+	}
+
+}
+
+
+20. 19번 문제를 확장하자. 19번 문제는 입력 순서대로 저장이 되었다. 
+    이번엔, 저장할 때, 도서 이름 순(사전편찬 순서)으로 정렬하여 저장하고, 정렬된 상태로 출력이 되도록 기능을 확장해보자.
+    (데이터를 저장하고, 정렬하는 것이 아니라, 저장할 때 정렬되어 저장하는 방식으로 구현해야 한다.)#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#pragma warning(disable:4996)
+typedef struct
+{
+	char title[20];
+	char publish[20];
+	int price;
+}book;
+int main()
+{
+	book arr[3]; //메인
+	book x; //교환해줄때 쓰는
+	int i, j, tmp = 1;
+
+
+	for (i = 0; i < 3; i++)
+	{
+		printf("%d번째 도서 정보 입력 : \n", i + 1);
+		printf("도서제목 : ");
+		scanf("%s", &arr[i].title);
+		printf("출판사 명 : ");
+		scanf("%s", &arr[i].publish);
+		printf("도서가격 : ");
+		scanf("%d", &arr[i].price);
+		printf("%d번쨰 입력 완료\n", i + 1);
+		printf("\n");
+		for (j = i; j > 1; j--) // 다른 정렬을 써야하나?
+			//i가 0이면 들어오지않음, i가 1이면 한번어와서 비교후 정렬,
+			//i가 2이면 두번 정렬
+			//다른 정렬 안써도 되야함
+		{
+			if (strcmp(arr[j].title, arr[j - 1].title) > 0)
+			{
+				x = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = x;
+			}
+		}
+	}
+	printf("도서 정보 출력\n");
+	for (i = 0; i < 3; i++)
+	{
+		printf("%d번째 도서 정보 출력 : \n", i + 1);
+		printf("도서제목 :%s\n", arr[i].title);
+		printf("출판사 명 :%s\n ", arr[i].publish);
+		printf("도서가격 : %d\n", arr[i].price);
+		printf("\n");
+	}
+
+}
+
+
+21. 20번 문제를 확장하자. 
+    무조건 도서 이름 순으로 정렬하는 것이 아니라, 도서이름/출판사/가격 무엇을 기준으로 정렬할지 사용자에게 입력받자.
+    그리고, 그 입력에 따라 정렬된 정보를 출력하자.
+    ex) 1번째 도서 정보 입력 : 
+        도서 제목 :
+        출판사 명 : 
+        도서 가격 :
+        1번째 입력 완료
+
+        ...
+
+        *도서 정보 출력*
+        정렬 방식 선택 : 
+        1.도서 제목 2.출판사 3.가격 4.종료
+        1
+        1번째 도서 정보 출력 :
+        ...
+
+        *도서 정보 출력*
+        정렬 방식 선택 :
+        1.도서 제목 2.출판사 3.가격 4.종료
+        2
+        1번째 도서 정보 출력 :
+        ...
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#pragma warning(disable:4996)
+typedef struct
+{
+	char title[20];
+	char publish[20];
+	int price;
+}book;
+int TITLE(book *arr)
+{
+	book tmp;
+	int i, j;
+	for (i = 2; i > 0; i--)
+	{
+		for (j = 0; j < i; j++)
+		{
+			if (strcmp(arr[j].title, arr[j + 1].title) > 0)
+			{
+				tmp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = tmp;
+			}
+		}
+	}
+	printf("도서 정보 출력\n");
+	for (i = 0; i < 3; i++)
+	{
+		printf("%d번째 도서 정보 출력 : \n", i+1);
+		printf("도서제목 :%s\n", arr[i].title);
+		printf("출판사 명 :%s\n ", arr[i].publish);
+		printf("도서가격 : %d\n", arr[i].price);
+	}
+}
+int PUBLISH(book *arr)
+{
+	book tmp;
+	int i, j;
+	for (i = 2; i > 0; i--)
+	{
+		for (j = 0; j < i; j++)
+		{
+			if (strcmp(arr[j].publish, arr[j + 1].publish) > 0)
+			{
+				tmp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = tmp;
+			}
+		}
+	}
+	printf("도서 정보 출력\n");
+	for (i = 0; i < 3; i++)
+	{
+		printf("%d번째 도서 정보 출력 : \n", i + 1);
+		printf("도서제목 :%s\n", arr[i].title);
+		printf("출판사 명 :%s\n ", arr[i].publish);
+		printf("도서가격 : %d\n", arr[i].price);
+	}
+}
+int PRICE(book * arr)
+{
+	book tmp;
+	int i, j;
+	for (i = 2; i > 0; i--)
+	{
+		for (j = 0; j < i; j++)
+		{
+			if (arr[j].price > arr[j + 1].price)
+			{
+				tmp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = tmp;
+			}
+		}
+	}
+	printf("도서 정보 출력\n");
+	for (i = 0; i < 3; i++)
+	{
+		printf("%d번째 도서 정보 출력 : \n", i + 1);
+		printf("도서제목 :%s\n", arr[i].title);
+		printf("출판사 명 :%s\n ", arr[i].publish);
+		printf("도서가격 : %d\n", arr[i].price);
+	}
+}
+int main()
+{
+	book arr[3];
+	int i,num;
+
+	for (i = 0; i < 3; i++)
+	{
+		printf("%d번째 도서 정보 입력 : \n", i+1);
+		printf("도서제목 : ");
+		scanf("%s", &arr[i].title);
+		printf("출판사 명 : ");
+		scanf("%s", &arr[i].publish);
+		printf("도서가격 : ");
+		scanf("%d", &arr[i].price);
+		printf("%d번쨰 입력 완료\n", i+1);
+		printf("\n");
+	}
+	while (1) {
+		printf("*도서 정보 출력*\n");
+		printf("정렬 방식 선택 : \n");
+		printf("1.도서제목 2.출판사 3.가격 4.종료\n");
+		scanf("%d", &num);
+		if (num == 1)
+		{
+			TITLE(arr);
+		}
+		else if (num == 2)
+		{
+			PUBLISH(arr);
+		}
+		else if (num == 3)
+		{
+			PRICE(arr);
+		}
+		else if (num == 4)
+		{
+			break;
+		}
+	}
+	return 0;
+}
+
+
+
+===============================================================================================
+
+>자료구조 (21.07 ~ 21.09) 3개월
+ => 현실의 데이터(자료)를 컴퓨터에 어떻게 표현/저장 할 것인가? 고민한 학문 => 자료구조
+ - 스택
+ - 큐
+ - 리스트
+ - 트리
+
+>알고리즘 (21.10 ~ 22.01) 4개월
+ => 현실의 데이터(자료)를 바탕으로, 어떠한 문제를 해결하는 학문.
+ - DP(Dynamic Programming)
+ - DFS
+ - BFS
+*/
+
+/*
+18. 문자열 처리함수 직접 만들어보기.
+    1. 문자열 길이 반환    : int strLen(char* str)
+    2. 문자열 복사 함수    : int strCpy(char* dest, char* src)  // 복사한 문자열 길이 반환
+    3. 문자열 덧붙이기     : int strCat(char* dest, char* src)  // 덧붙여진 문자열 최종 길이 반환
+    4. 두 개의 문자열 비교 : int strCmp(char* str1, char* str2) // 같으면 0, str1이 사전편찬 더 빠르면 -1, str2가 더 빠르면 1
+
+ */
+#include <stdio.h>
+#include <string.h>
+
+#pragma warning(disable:4996)
+int strLen(char* str)
+{
+    int len = 0;
+    
+    while (str[len] != '\0')
+    {
+        len++;
+    }
+    return len;
+}
+
+int strCpy(char* dest, char* src)
+{
+    int i, len = 0, tmp = 0;
+
+    while (src[tmp] != '\0')
+    {
+        tmp++;
+    }
+    for (i = 0; i < tmp; i++)
+    {
+        dest[i] = src[i];
+    }
+    dest[tmp] = '\0';
+
+    while (dest[len] != '\0')
+    {
+        len++;
+    }
+
+    return len;
+}
+int strCat(char* dest, char* src)
+{
+    int i, dest_len=0,src_len=0,x=0;
+
+    while (dest[dest_len] != '\0')
+    {
+        dest_len++;
+    }
+
+    while (src[src_len] != '\0')
+    {
+        src_len++;
+    }
+
+    for (i = dest_len; i < dest_len + src_len; i++)
+    {
+        dest[i] = src[x++];
+    }
+    return dest_len + src_len;
+}/*
+int strCmp(char* str1, char* str2)
+{
+    int i, tmp = 0, len = 0,x,sign;
+
+    while (str1[len] != '\0')
+    {
+        len++;
+    }
+    while (str2[tmp] != '\0')
+    {
+        tmp++;
+    }
+
+    if (len > tmp)
+    {
+        x = len;
+    }
+    else if (tmp > len)
+    {
+        x = tmp;
+    }
+    else
+    {
+        x = tmp;
+    }
+
+    sign = 1;
+    int a = -1;
+
+    for(i = 0; i < x; i++)
+    {
+        if (str1[i] == str2[i])
+        {
+            sign = -1;
+        }
+        else
+        {
+            sign = 1;
+            a = 1;
+        }
+    }
+
+    if (sign == -1 &&)
+    {
+        return 0;
+    }
+    for (i = 0; i < x; i++)
+    {
+        if (str1[i] < str2[i])
+        {
+            return 1;
+        }
+    }
+
+    for (i = 0; i < x; i++)
+    {
+        if (str1[i] > str2[i])
+        {
+            return -1;
+        }
+    }
+}*/
+
+int strCmp2(char* str1, char* str2) // 'abc' 'abcd'
+{
+    int idx = 0;
+
+
+    while (str1[idx] != '\0' || str2[idx] != '\0')
+    {
+        if (str1[idx] > str2[idx])
+        {
+            return 1;
+        }
+        else if (str1[idx] < str2[idx])
+        {
+            return -1;
+        }
+
+        idx++;
+    }
+
+    return 0;
+
+}
+
+int main(void)
+{
+    char arr1[10] = "hello";
+    char arr2[10] = "bye";
+
+    printf("%d", strCmp2("abcd", "abc"));
+
+}
