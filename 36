@@ -1,0 +1,219 @@
+/*
+19. 도서 정보 구조체를 정의하고, 이를 활용해 데이터를 입력 받고 출력해보자.
+    저장할 데이터는 : 도서이름, 출판사, 가격 3가지 정보이다.
+    (총 3개의 데이터 입력 및 출력)
+    ex) 1번째 도서 정보 입력 :
+        도서 제목 :
+        출판사 명 :
+        도서 가격 :
+        1번째 입력 완료
+
+        ...
+
+        *도서 정보 출력*
+        1번째 도서 정보 출력 :
+        ...
+
+
+20. 19번 문제를 확장하자. 19번 문제는 입력 순서대로 저장이 되었다.
+    이번엔, 저장할 때, 도서 이름 순(사전편찬 순서)으로 정렬하여 저장하고, 정렬된 상태로 출력이 되도록 기능을 확장해보자.
+    (데이터를 저장하고, 정렬하는 것이 아니라, 저장할 때 정렬되어 저장하는 방식으로 구현해야 한다.)
+
+
+
+21. 20번 문제를 확장하자.
+    무조건 도서 이름 순으로 정렬하는 것이 아니라, 도서이름/출판사/가격 무엇을 기준으로 정렬할지 사용자에게 입력받자.
+    그리고, 그 입력에 따라 정렬된 정보를 출력하자.
+    ex) 1번째 도서 정보 입력 :
+        도서 제목 :
+        출판사 명 :
+        도서 가격 :
+        1번째 입력 완료
+
+        ...
+
+        *도서 정보 출력*
+        정렬 방식 선택 :
+        1.도서 제목 2.출판사 3.가격 4.종료
+        1
+        1번째 도서 정보 출력 :
+        ...
+
+        *도서 정보 출력*
+        정렬 방식 선택 :
+        1.도서 제목 2.출판사 3.가격 4.종료
+        2
+        1번째 도서 정보 출력 :
+        ...
+
+
+
+===============================================================================================
+>자료구조 : 현실의 데이터(자료)를 컴퓨터에 어떻게 표현/저장 할 것인가? 고민한 학문 => 자료구조
+
+ex1) 2차원 배열 동적할당
+    int main(void)
+    {
+       int ** ary;
+       int rows, cols;
+
+     printf("row, col size : ")
+     scanf("%d %d", &rows, cols);
+
+     ary = make2DArray(rows, cols); // 동적할당
+
+     init2DArray(ary, rows, cols);
+     print2DArray(ary, rows, cols);
+
+     free2DArray(ary, rows); // 동적해제 (순서 중요)
+  }
+
+ex2) 캡쳐문제.
+
+
+>자료구조/알고리즘의 이해
+  - 구조체 정의 / typedef
+  - malloc/free
+  - 포인터 변수 선언 및 연산
+  - 재귀함수 동작방식
+
+  - 자료구조란? 궁극적으로 '데이터의 저장'이 목적.
+    - 사실 int형 변수/구조체 변수도 자료구조의 일종이라 본다. 
+    - 데이터를 표현 및 저장하는 하나의 방법이기 때문에.
+    - 배열도 자료구조의 일종임.
+
+  - 우린 더 복잡한 자료구조를 할 것임.
+    - *선형구조   : 리스트/스택/큐
+    - *비선형구조 : 트리/그래프
+    - 단순구조   : 정수/실수/문자/문자열
+  
+  - 자료 구조 모델 자체의 이해가 중요하다! 
+    - 물론 자료구조의 구현도 중요하지만, 사실 나중에 다 라이브러리 갖다 쓸것임.
+    - 구현을 직접 해봄으로써 기본적인 구현실력 자체 향상 및 자료구조의 좀 더 깊은 이해를 할 순 있다. 
+
+  - 자료구조 : 데이터의 표현 및 저장방법
+  - 알고리즘 : 표현 및 저장된 데이터를 대상으로 하는 '문제의 해결 방법'
+    - int arr[10] = {1,2,3,4,5,6,7,8,9,10}; // 자료구조
+    - for(i = 0 ; i < 10 ; i++) // 알고리즘
+        sum += arr[i]; 
+
+  - 이렇듯, 자료구조가 결정되어야! 효율적인 알고리즘이 결정된다. 
+    - 상자가 많이 쌓여져 있다. 이 중 어딘가에 넣어둔 머그컵을 찾아야 한다면?
+      - 당연히, 가장 위에 상자부터 일일히 꺼내서 찾아봐야 한다. 
+      - 자료구조에 따라 -> 알고리즘은 달라진다. 
+      - 알고리즘은 -> 자료구조에 의존한다.
+
+
+>재귀(Recursion)
+
+>연결 리스트(Linked list)
+
+>스택(Stack)
+
+>큐(Queue)
+
+>트리(Tree)
+
+>우선순위 큐(Priority Queue)와 힙(Heap)
+
+>정렬(Sorting)
+
+>탐색(Search)
+
+>테이블(Table)/해쉬(Hash)
+
+>그래프(Graph)
+
+*/
+
+
+/*
+ex1) 2차원 배열 동적할당
+    int main(void)
+    {
+       int ** ary;
+       int rows, cols;
+
+     printf("row, col size : ")
+     scanf("%d %d", &rows, cols);
+
+     ary = make2DArray(rows, cols); // 동적할당
+
+     init2DArray(ary, rows, cols);
+     print2DArray(ary, rows, cols);
+
+     free2DArray(ary, rows); // 동적해제 (순서 중요)
+  }
+
+*/
+#include <stdio.h>
+#include <stdlib.h> // malloc, free
+
+#pragma warning(disable:4996)
+
+int** make2DArray(int row, int col)
+{
+    int** p;
+    int i;
+
+    p = (int**)malloc(sizeof(int*) * row); // 행
+
+    for (i = 0; i < row; i++)
+    {
+        p[i] = (int*)malloc(sizeof(int) * col); // 열
+    }
+
+    return p;
+}
+void init2DArray(int** p, int r, int c)
+{
+    int i, j;
+    int tmp = 1;
+    for (i = 0; i < r; i++)
+    {
+        for (j = 0; j < c; j++)
+        {
+            p[i][j] = tmp++;
+        }
+    }
+}
+void print2DArray(int** p, int r, int c)
+{
+    int i, j;
+    for (i = 0; i < r; i++)
+    {
+        for (j = 0; j < c; j++)
+        {
+            printf("%d ", p[i][j]);
+        }
+        puts("");
+    }
+}
+void free2DArray(int** p, int r)
+{
+    int i;
+
+    for (i = 0; i < r; i++)
+    {
+        free(p[i]);
+    }
+
+    free(p);
+}
+int main(void)
+{
+    int** ary;
+    int rows, cols;
+
+    printf("row, col size : ");
+    scanf("%d %d", &rows, &cols);
+
+    ary = make2DArray(rows, cols); // 동적할당
+
+    init2DArray(ary, rows, cols);
+    print2DArray(ary, rows, cols);
+
+    free2DArray(ary, rows); // 동적해제 (순서 중요)
+
+    return 0;
+}
