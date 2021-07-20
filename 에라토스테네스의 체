@@ -1,0 +1,53 @@
+Sieve of Eratosthenes
+**에라토스테네스의 체**
+
+>소수 판별 알고리즘 시간복잡도 
+  > n이 소수인지 판단하기. 
+    1. 2 ~ n-1 까지 다 나누어보기 => O(n)
+    2. 2 ~ n/2 까지 다 나누어보기 => O(n)
+    3. 2 ~ 루트(n)까지 다 나누어보기 (n 하나만을 판별하는 것은, 얘가 젤 빠름) => O(루트(n))
+
+  > 2 ~ n까지 모든 소수를 다 출력하기. 
+    1. 에라토스테네스의 체 (2 ~ n까지 모든 소수 판별하는 것은, 얘가 젤 빠름, O(nloglog(n))
+       A[2 ~ N] = false
+       I가 N 보다 작으면 반복한다.
+         배열에서 값이 false인 가장 작은 수를 I로 택하자. 이 수는 소수이다.
+         모든 I의 배수 X에 대해서 // 최적화 가능 (1)
+            A[X] = true
+       I로 택해진 수와 배열에서 값이 false로 남아있는 수는 모두 소수이다. 
+
+#include <stdio.h>
+#include <math.h>
+#pragma warning(disable:4996)
+#define MAX 1000000
+int isPrime[MAX + 1];
+int prime[MAX + 1], cnt, num, testcase, T;
+
+void sieve_Of_Eratosthenes(int N) {
+    for (int i = 2; i <= N; i++) {
+        isPrime[i] = 1;    // initialize isPrime[] array
+    }
+    int sqrtn = sqrt(N);
+    for (int i = 2; i <= sqrt(N); i++) {
+        if (!isPrime[i]) continue;
+        for (int j = i + i; j <= N; j += i) {
+            isPrime[j] = 0;
+        }
+    }
+}
+int main() {
+    sieve_Of_Eratosthenes(MAX);
+    scanf("%d", &testcase);
+    while (T != testcase) {
+        T++;
+        scanf("%d", &num);
+        printf("Case #%d\n", T);
+        if (isPrime[num]) {
+            puts("YES");
+        }
+        else {
+            puts("NO");
+        }
+    }
+    return 0;
+}
