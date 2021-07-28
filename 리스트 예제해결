@@ -1,0 +1,108 @@
+*******NameCardListMain.c*********
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "ArrayList.h"
+#include "NameCard.h"
+#pragma warning(disable:4996)
+
+int main(void)
+{
+    List list;
+    LData tmp;
+    int i;
+    char name[30];
+    char phone[30];
+    ListInit(&list);
+
+    for (i = 0; i < 3; i++)
+    {
+        printf("이름 : ");
+        gets(name);
+        printf("번호 : ");
+        gets(phone);
+        LInsert(&list, MakeNameCard(name, phone));
+    }
+
+    printf("찾을 이름 : ");
+    gets(name);
+
+    if (LFirst(&list, &tmp))
+    {
+        if (NameCompare(tmp, name) == 0)
+        {
+            ShowNameCardInfo(tmp);
+        }
+        while (LNext(&list, &tmp))
+        {
+            if (NameCompare(tmp, name) == 0)
+            {
+                ShowNameCardInfo(tmp);
+            }
+        }
+
+    }
+
+    printf("전화번호를 바꿀 이름 : ");
+    gets(name);
+    printf("바꿀 전화번호 : ");
+    gets(phone);
+
+    if (LFirst(&list, &tmp))
+    {
+        if (NameCompare(tmp, name) == 0)
+        {
+            ChangePhoneNum(tmp->phone, phone);
+        }
+
+        while (LNext(&list, &tmp))
+        {
+            if (NameCompare(tmp, name) == 0)
+            {
+                ChangePhoneNum(tmp->phone, phone);
+            }
+        }
+    }
+    
+      if (LFirst(&list, &tmp))
+        {
+            ShowNameCardInfo(tmp);
+
+            while (LNext(&list, &tmp))
+            {
+                ShowNameCardInfo(tmp);
+            }
+        }
+        
+    printf("삭제할 이름 : ");
+    gets(name);
+
+    if (LFirst(&list, &tmp))
+    {
+        if (NameCompare(tmp, name) == 0)
+        {
+            LRemove(&list);
+        }
+        while (LNext(&list, &tmp))
+        {
+            if (NameCompare(tmp, name) == 0)
+            {
+                LRemove(&list);
+            }
+        }
+
+    }
+    
+     
+        if (LFirst(&list, &tmp))
+        {
+            ShowNameCardInfo(tmp);
+
+            while (LNext(&list, &tmp))
+            {
+                ShowNameCardInfo(tmp);
+            }
+        }
+
+        return 0;
+    }
