@@ -1,0 +1,172 @@
+/*
+>메모리 관리 & 동적할당
+
+- 메모리의 구성
+  - 코드 영역   : 실행할 프로그램의 코드가 저장되는 공간
+  - 데이터 영역 : 전역변수, static 변수 (프로그램 시작과 동시에 메모리 공간에 할당, 프로그램 종료 시 까지 남아있음)
+  - 스택 영역   : 지역변수, 매개변수 (함수를 빠져나가면 소멸)
+  - 힙 영역     : 프로그래머가 원하는 시점에 변수를 할당 & 소멸 하도록 지원하는데, 이런 변수가 저장되는 곳.
+    => 운영체제에 의해 할당된 메모리 공간
+    free(p); 해줄떄 까지 (+당연히, 프로그램 끝나면 다 사라짐)
+
+  -> 메모리 공간을 나눠서 유사한 성향의 데이터를 묶어서 저장하면?
+     관리가 용이 + 메모리 접근속도 향상
+  -> 마치 서랍장 수납공간 (종류별로 정리하듯)
+
+
+- 메모리의 동적할당
+  - 전역/지역 변수로 해결이 되지 않는 상황
+
+  ex) 이 예제의 문제점은?
+      char* ReadUserName(void)
+      {
+         char name[30];
+         printf("name : ");
+         gets(name);
+
+         return name;
+      }
+
+      int main(void)
+      {
+        char* name1; 
+
+        name1 = ReadUserName();
+        printf("name1 : %s\n", name1);
+
+        return 0;
+      }
+
+- 힙 영역의 메모리 공간 할당/해제 : malloc(), free()
+  - #include <stdlib.h>
+  - void* malloc(size_t size); // 힙 영역에 메모리 공간 할당
+  - void free(void* ptr);      // 힙 영역에 할당된 메모리 공간 해제
+
+    - void* ptr1 = malloc(4); // 4바이트가 힙 영역에 할당.
+      - 전달된 정수값에 해당하는 바이트 크기 메모리공간을 힙 영역에 할당하고, 이 메모리 공간의 주소값을 반환.
+    - free(ptr1); // ptr1이 가리키는 4바이트 메모리 공간 해제
+
+    - void* ptr = malloc(sizeof(int)); // int형 변수 크기의 메모리 공간 할당.
+      *ptr = 20; // ptr이 void형 포인터 이므로 컴파일 에러.
+
+    => malloc() 왈 : 원하시는 크기만큼 메모리 공간 할당하고, 주소값 반환할테니,
+                     어떻게 사용할지는 포인터 형의 변환을 통해서 직접 결정해라.
+
+    - char* pt1 = (char*)malloc(sizeof(char));
+    - int* ptr1 = (int*)malloc(sizeof(int));
+       ,,,
+
+
+    - int* arr = (int*)malloc(sizeof(int)*7); // 마치, int arr[7]; 과 같은 느낌.. (메모리 정의 공간이 다름.)
+
+    -> 이러한 malloc() 함수의 호출을 통한 메모리 공간 할당 => 동적할당(dynamic allocation)
+
+    ex) 앞선 문제된 예제를 변경하면?
+
+=============================================================================================================
+
+  - void* realloc(void* ptr, size_t size);
+    - ptr이 가리키는 메모리 크기를 size 크기로 조절해줘(늘려줘)
+
+    ex) int* arr = (int*)malloc(sizeof(int)*3); // 길이가 3인 int형 배열 할당
+       arr = (int*)realloc(arr, sizeof(int)*5); // 길이가 5인 int형 배열로 확장.
+
+       -> 이때, realloc()한 메모리 주소와 기존 메모리 주소가 같다면? 뒤에 길이만 확장함.
+       -> 다르다면? 기존 배열의 값을 복사해오고, 길이 확장함.
+       -> 결론 : 배열 안의 값들은 보존되고, 메모리 크기(길이)만 늘어난다.!
+
+
+
+ex1) 프로그램 사용자로부터 문자열을 입력받아, 입력받은 문자열의 단어를 역으로 출력하는 프로그램 작성.
+     "I am a boy"
+     "boy a am I"
+     단, 문자열 입력에 앞서, 입력한 문자열의 최대길이 정보를 먼저 입력받자.
+     그 길이만큼 메모리 공간을 동적할당하여 문자열 입력받기.
+
+
+ex2) 사용자로부터 정수를 입력받는다.
+     -1이 입력될 때까지 계속해서 입력받아서, 프로그램 종료 직전에, 입력받은 정수 전부를 순서대로 출력하는 프로그램 작성.
+     단, 사용자가 몇개의 정수를 입력할지 모른다.
+     일단, 길이가 5인 int형 배열읠 힙에 할당.
+     배열이 꽉 찰때마다, 길이를 3씩 늘리기로 하자. (realloc() 활용)
+
+
+
+>C 전체 복습 (+좀 더 어려운 문제들)
+
+===============================================================================================
+
+>자료구조 (21.07 ~ 21.09) 3개월
+ => 현실의 데이터(자료)를 컴퓨터에 어떻게 표현/저장 할 것인가? 고민한 학문 => 자료구조
+ - 스택
+ - 큐
+ - 리스트
+ - 트리
+
+>알고리즘 (21.10 ~ 22.01) 4개월
+ => 현실의 데이터(자료)를 바탕으로, 어떠한 문제를 해결하는 학문.
+ - DP(Dynamic Programming)
+ - DFS
+ - BFS
+*/
+
+/*
+
+*/
+
+#include <stdio.h>
+#include <stdlib.h> // malloc, free
+
+#pragma warning(disable:4996)
+
+
+int main(void)
+{
+    int num = 0,y=0;
+    int max_size, i, length = 0,x=0;
+    char* arr;
+
+    /* INIT */
+    printf("문자열 max size : ");
+    scanf("%d", &max_size);
+
+    getchar(); // 입력버퍼에 엔터 삭제.
+    arr = (char*)malloc(sizeof(char) * max_size);
+    tmp = (char**)malloc(sizeof(char*) * max_size);
+    
+    printf("입력한 %d 사이즈 만큼 배열 할당 완료\n", max_size);
+    printf("문자열 입력 : ");
+    gets(arr);
+
+    /* MAIN LOGIC */
+    while (arr[length++] != '\0') 
+    {
+        length++;
+    }
+    // length = strlen(arr);
+
+    for (i = 0; i < length; i++)
+    {
+        if (arr[i] == ' ')
+        {
+            arr[i] = '\0';  
+        }
+    }
+
+    for (i = 0; i <length ; i++)
+    {
+        if (arr[i] == '\0')
+        {
+            tmp[num++] = &arr[x];
+            x = i+1;
+        }
+    }
+
+    for (i = num-1; i >= 0; i--)
+    {
+        printf("%s ", tmp[i]);
+    }
+
+    return 0;
+}
+
