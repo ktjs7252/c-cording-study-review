@@ -1,0 +1,429 @@
+/*
+ex1) LinkedRead.c를 수정해보자.
+     새 노드를 연결 리스트의 꼬리가 아닌 머리에 추가하도록 수정하자.
+     원래는, 3->2->7->8의 연결 리스트에 5를 추가로 삽입하면, 3->2->7->8->5
+     근데 이걸, 5->3->2->7->8 이렇게 되도록 수정하기.
+
+
+
+> 단순 연결 리스트의 ADT와 구현
+  - 연결의 형태가 한쪽 방향으로 전개되고 시작과 끝이 존재하는 '단순 연결 리스트'
+  - 사실 순차 리스트의 ADT를 그대로 적용해도 됨.
+  - 하지만 정렬 기능 추가하기 위해 ADT를 조금 확장해서 정의하자.
+
+  1. void ListInit(List* plist);
+     - 초기화할 리스트의 주소값을 인자로 전달.
+     - 리스트 생성 후 제일 먼저 호출 되어야 하는 함수.
+
+  2. void LInsert(List* plist, LData data);
+     - 리스트에 데이터를 저장. 매개변수 data에 전달된 값을 저장.
+
+  3. int LFirst(List* plist, LData* pdata);
+     - 첫번째 데이터가 pdata가 가리키는 메미로에 저장.
+     - 데이터의 참조를 위한 초기화 진행
+     - 참조 성공 시 True(1), 실패 시 False(0) 반환
+
+  4. int LNext(List* plist, LData* pdata);
+     - 참조된 데이터의 다음 데이터가 pdata가 가리키는 메모리에 저장됨.
+     - 순차적인 참조를 위해 반복 호출이 가능함.
+     - 참조를 새로 시작하려면 먼저 LFirst 함수를 호출해야 함.
+     - 참조 성공 시 True(1), 실패 시 False(0) 반환
+
+  5. LData LRemove(List* plist);
+     - LFirst 또는 LNext 함수의 마지막 반환 데이터를 삭제.
+     - 삭제된 데이터는 반환
+     - 마지막 반환 데이터를 삭제하므로 연이은 반복 호출을 허용하지 않는다.
+
+  6. int LCount(List* plist);
+     - 리스트에 저장되어 있는 데이터 수를 반환
+
+  7. void SetSortRule(List* plist, int (*comp)(LData d1, Ldata d2));
+     - 리스트에 정렬의 기준이 되는 함수를 등록.
+     - ex) int Func(LData d1, LData d2) // typedef int LData
+           {
+               if (d1 < d2) return 0; // d1이 정렬순서가 더 앞선다.
+               else return 1;
+           }
+           => 사실, 반환값을 우리가 정하는 것임.
+           => 우리가 정한대로, return 받았을 떄 활용하면 그만.
+
+
+
+> 새 노드를 추가할 때, 리스트의 머리와 꼬리 중 어디에 저장할까?
+  - 머리에 추가하면
+    - 장점 : 포인터 변수 tail 불필요
+    - 단점 : 저장된 순서 유지 X
+  - 꼬리에 추가하면
+    - 장점 : 저장된 순서 유지
+    - 단점 : 포인터 변수 tail 필요
+
+  => 보통은 머리에 추가함. 왜냐면 tail 변수 관련 코드가 번거로울 수 있음.
+  => 저장된 순서 유지 안되도 괜찮음. 순서를 유지해야 하는 자료구조가 아니거든.
+
+
+> 더미 노드(Dummy node) 기반의 단순 연결리스트
+  - 앞선 예제의 연결리스트 구조               ↓ tail
+    head -> [2, *] -> [4, *] -> [6, *] -> [8, *]
+
+    - 이런 구조의 단점이 뭘까?
+    - 노드 추가,삭제, 조회 할때, 첫번째 노드 / 두번째 이후 노드의 접근 방법 차이가 있다.
+
+  - 이를 개선한 연결리스트 구조
+    head -> [DUMMY, *] -> [2, *] -> [4, *] -> .. 
+    
+    - tail 사라짐
+    - dummy node 추가. 
+      - 아무런 데이터 없음
+      - 처음 추가되는 노드가, 구조상 두번째 노드가 되므로 노드의 추가/삭제/조회 시 코드가 일관된 형태로 가능. 
+
+
+ex2) LinkedRead.c에서 생성하는 연결 리스트에, 더미 노드를 추가해보자.
+     tail은 일단 놔두고, 더미 노드만을 추가해서 코드 정상적으로 잘 동작하도록 수정해보고, 이해하자.
+
+     head -> [DUMMY, *] -> [2, *] -> [4, *] <- tail
+
+
+> DLinkedList.h 
+  - 현재까지는, main 함수에 Node* head; 선언 했었는데,
+    리스트 종류가 많아질 때 마다, 필요한 변수들을 매번 선언할 수 없다.
+
+  - 연결리스트를 위한 구조체를 포함한, 함수 선언들을 DLinkedList.h 파일에 모아놓자!
+    - 함수 ADT는, 기존의 순차 리스트와 동일한데,
+    - 정렬기준 저장을 위한 SetSortRule()만 추가됨. 
+
+
+> DLinkedList.c & DLinkedListMain.c 이해하기.
+  - 자료구조할 때, 매번 강조하지만, 흐름 다 확실히 이해할 수 있고, 그걸 바탕으로 ADT 수정 및 main 수정 할 수 있으면 충분하다.
+  - 자료구조 자체를 모두 구현하는 것은, C언어 문법 및 구현 연습엔 좋다.
+  - 자료구조 모델을 이해하고, 어떻게 활용할 수 있을지 감 잡으면 된다.
+
+*/
+---------------------------------------------------------------
+*************LinkedRead.c
+///*
+//ex2) LinkedRead.c에서 생성하는 연결 리스트에, 더미 노드를 추가해보자.
+//tail은 일단 놔두고, 더미 노드만을 추가해서 코드 정상적으로 잘 동작하도록 수정해보고, 이해하자.
+//
+//head -> [DUMMY, *] -> [2, *] -> [4, *] < -tail
+//
+//*/
+//
+//#include <stdio.h>
+//#include <stdlib.h>
+//
+//#pragma warning(disable:4996)
+//
+//typedef struct _node
+//{
+//   int data; // 데이터 담을 공간
+//   struct _node* next; // 연결 도구!
+//} Node;
+//
+//int main(void)
+//{
+//   Node* head = NULL;    // NULL 포인터 초기화
+//   Node* tail = NULL;
+//   Node* cur = NULL;
+//
+//   Node* newNode = NULL;
+//   int readData;
+//
+//   head = (Node*)malloc(sizeof(Node));
+//   tail = head;
+//
+//   /**** 데이터를 입력 받는 과정 ****/
+//   while (1)
+//   {
+//      printf("자연수 입력: ");
+//      scanf("%d", &readData);
+//      if (readData < 1)
+//         break;
+//
+//      /*** 노드의 추가과정 ***/
+//      newNode = (Node*)malloc(sizeof(Node));
+//      newNode->data = readData;
+//      newNode->next = NULL;
+//
+//      tail->next = newNode;
+//      tail = newNode;
+//      /*if (head == NULL)
+//      {
+//         head = newNode;
+//         tail = newNode;
+//      }
+//      else
+//      {
+//         newNode->next = head;
+//         head = newNode;
+//      }*/
+//   }
+//   printf("\n");
+//
+//
+//   /**** 입력 받은 데이터의 출력과정 ****/
+//   printf("입력 받은 데이터의 전체출력! \n");
+//   if (head == NULL)
+//   {
+//      printf("저장된 자연수가 존재하지 않습니다. \n");
+//   }
+//   else
+//   {
+//      cur = head;
+//      //printf("%d ", cur->data); // 첫 번째 데이터 출력
+//
+//      while (cur->next != NULL)   // 두 번째 이후의 데이터 출력
+//      {
+//         cur = cur->next;
+//         printf("%d  ", cur->data);
+//      }
+//   }
+//   printf("\n\n");
+//
+//   /**** 메모리의 해제과정 ****/
+//   if (head == NULL)
+//   {
+//      return 0;    // 해제할 노드가 존재하지 않는다.
+//   }
+//   else
+//   {
+//      Node* delNode = head;
+//      Node* delNextNode = head->next;
+//
+//      //printf("%d을(를) 삭제합니다. \n", head->data);
+//      //free(delNode);    // 첫 번째 노드의 삭제
+//
+//      while (delNextNode != NULL)    // 두 번째 이후의 노드 삭제 위한 반복문
+//      {
+//         delNode = delNextNode;
+//         delNextNode = delNextNode->next;
+//
+//         printf("%d을(를) 삭제합니다. \n", delNode->data);
+//         free(delNode);    // 두 번째 이후의 노드 삭제
+//      }
+//   }
+//
+//   return 0;
+//}
+-----------------------------------------------------------------
+********************DLinkedList.h
+#ifndef __D_LINKED_LIST_H__
+#define __D_LINKED_LIST_H__
+
+#define TRUE   1
+#define FALSE   0
+
+typedef int LData;
+
+typedef struct _node
+{
+   LData data;
+   struct _node * next;
+} Node;
+
+typedef struct _linkedList
+{
+   Node* head;   // 더미 노드 가리키는 멤버
+   Node* cur;    // 참조/삭제 돕는 멤버
+   Node* before; // 삭제 돕는 멤버
+   int numOfData; // 저장된 데이터 수 
+   int (*comp)(LData d1, LData d2); // 정렬 기준 등록
+} LinkedList;
+
+
+typedef LinkedList List;
+
+void ListInit(List * plist);
+void LInsert(List * plist, LData data);
+
+int LFirst(List * plist, LData * pdata);
+int LNext(List * plist, LData * pdata);
+
+LData LRemove(List * plist);
+int LCount(List * plist);
+
+void SetSortRule(List * plist, int (*comp)(LData d1, LData d2));
+
+#endif
+---------------------------------------------------
+****************DLinkedListMain.c
+#include <stdio.h>
+#include "DLinkedList.h"
+
+int SortFunc(int d1, int d2)
+{
+   if (d1 < d2)
+      return 0;    // d1이 정렬 순서상 앞선다.
+   else
+      return 1;    // d2가 정렬 순서상 앞서거나 같다.
+}
+
+int main(void)
+{
+   // List의 생성 및 초기화 /////////////////////////////
+   List list;
+   int data;
+   ListInit(&list);
+
+   // SetSortRule(&list, SortFunc);
+
+   // 5개의 데이터 저장 /////////////////////////////
+   LInsert(&list, 11);  LInsert(&list, 11);
+   LInsert(&list, 22);  LInsert(&list, 22);
+   LInsert(&list, 33);
+
+   // 저장된 데이터의 전체 출력 /////////////////////////
+   printf("현재 데이터의 수: %d \n", LCount(&list));
+
+   if(LFirst(&list, &data))    // 첫 번째 데이터 조회
+   {
+      printf("%d ", data);
+      
+      while(LNext(&list, &data))    // 두 번째 이후의 데이터 조회
+         printf("%d ", data);
+   }
+   printf("\n\n");
+
+   // 숫자 22을 검색하여 모두 삭제 //////////////////////////
+   if(LFirst(&list, &data))
+   {
+      if(data == 22)
+         LRemove(&list);
+      
+      while(LNext(&list, &data))
+      {
+         if(data == 22)
+            LRemove(&list);
+      }
+   }
+
+   // 삭제 후 남아있는 데이터 전체 출력 ////////////////////////
+   printf("현재 데이터의 수: %d \n", LCount(&list));
+
+   if(LFirst(&list, &data))
+   {
+      printf("%d ", data);
+      
+      while(LNext(&list, &data))
+         printf("%d ", data);
+   }
+
+   printf("\n\n");
+
+   return 0;
+}
+---------------------------------------------------------
+*****************DLinkedList.c
+#include <stdio.h>
+#include <stdlib.h>
+#include "DLinkedList.h"
+
+
+/*
+head -> [DMY, *]
+*/
+void ListInit(List * plist)
+{
+   plist->head = (Node*)malloc(sizeof(Node)); // 더미 노드 생성
+   plist->head->next = NULL;
+   plist->comp = NULL;
+   plist->numOfData = 0;
+}
+
+void FInsert(List * plist, LData data)  // 머리에 새 노드 추가
+{
+   /* 새 Node 생성*/
+   Node * newNode = (Node*)malloc(sizeof(Node));
+   newNode->data = data;
+
+   newNode->next = plist->head->next; // 새노드가 다른 노드 가리키게
+   plist->head->next = newNode; // 더미 노드가 새노드 가르키게
+
+   (plist->numOfData)++; // 노드 수 증가
+}
+
+void SInsert(List * plist, LData data) 
+{
+   Node * newNode = (Node*)malloc(sizeof(Node)); 
+   Node * pred = plist->head; // pred -> 더미노드 가리킴.
+   newNode->data = data;
+
+   /* 새 노드가 들어갈 위치를 찾기 위한 반복문 */
+   while(pred->next != NULL && plist->comp(data, pred->next->data) != 0) // if (d1 < d2) return 0;
+   {
+      pred = pred->next; // 다음 노드로 이동.
+   }
+
+   newNode->next = pred->next;
+   pred->next = newNode; // pred가 가리키는 node의 오른쪽에 새 노드 추가. 
+
+   (plist->numOfData)++;
+}
+
+/*
+사용자는, 외부에서 LInsert()만을 호출한다. 
+내부적으로, comp 초기화에 따라서, 
+(1)FInsert() 아니면, (2)SInsert() 호출되는데, 이건 내부적으로 해주는 것. 
+단지, 우리는 comp 초기화를 어떻게 할래?만 정하면 되는 것. 
+*/
+void LInsert(List * plist, LData data)
+{
+   if(plist->comp == NULL)   // 정렬 기준이 없으면
+      FInsert(plist, data); // 머리에 추가
+   else // 정렬 기준 있으면
+      SInsert(plist, data); // 정렬 기준에 근거하여 추가
+}
+
+int LFirst(List * plist, LData * pdata)
+{
+   if(plist->head->next == NULL) // 더미 노드가 가르키는 녀석이 NULL? 데이터가 없다.
+      return FALSE;
+
+   plist->before = plist->head; // before는 더미 가르키게 함. (이게 왜 필요할까?)
+   plist->cur = plist->head->next; // cur은 첫번째 노드(더미 다음 녀석) 가르키게 함.
+
+   *pdata = plist->cur->data; // cur data를 반환
+
+   return TRUE;
+}
+
+int LNext(List * plist, LData * pdata)
+{
+   if(plist->cur->next == NULL) // cur->다음녀석이 없다? 데이터 없다. 
+      return FALSE;
+
+   plist->before = plist->cur;
+   plist->cur = plist->cur->next;
+
+   *pdata = plist->cur->data;
+
+   return TRUE;
+}
+
+/*
+바로 이전에 호출된 LFirst or LNext 함수가 반환한 데이터를 삭제한다.
+ -> 다른말로 cur 위치에 있는 녀석을 삭제한다. 
+
+*/
+LData LRemove(List * plist)
+{
+   Node * rpos = plist->cur;
+   LData rdata = rpos->data;
+
+   plist->before->next = plist->cur->next; // 지울 대상을 리스트에서 제거
+   plist->cur = plist->before; // cur을 한칸 왼쪽으로 이동.
+
+   free(rpos); // 지울 대상을 동적해제 (소멸)
+   (plist->numOfData)--;
+
+   return rdata;
+}
+
+int LCount(List * plist)
+{
+   return plist->numOfData;
+}
+
+void SetSortRule(List * plist, int (*comp)(LData d1, LData d2))
+{
+   plist->comp = comp;
+}
