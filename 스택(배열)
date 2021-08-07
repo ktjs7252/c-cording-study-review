@@ -1,0 +1,108 @@
+************ArrayBaseStackMain.c*********8
+#include <stdio.h>
+#include "ArrayBaseStack.h"
+
+int main(void)
+{
+    // Stack의 생성 및 초기화 ///////
+    Stack stack;
+    StackInit(&stack);
+
+    // 데이터 넣기 ///////
+    SPush(&stack, 1);  SPush(&stack, 2);
+    SPush(&stack, 3);  SPush(&stack, 4);
+    SPush(&stack, 5);
+
+    // 데이터 꺼내기 ///////
+    while (!SIsEmpty(&stack))
+        printf("%d ", SPop(&stack));
+
+    return 0;
+}
+
+*********"ArrayBaseStack.h*********
+#ifndef __AB_STACK_H__
+#define __AB_STACK_H__
+
+#define TRUE   1
+#define FALSE   0
+#define STACK_LEN   100
+
+typedef int Data;
+
+typedef struct _arrayStack
+{
+	Data stackArr[STACK_LEN];
+	int topIndex;
+} ArrayStack;
+
+typedef ArrayStack Stack;
+
+void StackInit(Stack* pstack);
+int SIsEmpty(Stack* pstack);
+
+void SPush(Stack* pstack, Data data);
+Data SPop(Stack* pstack);
+Data SPeek(Stack* pstack);
+
+#endif
+************ArrayBaseStack.c*********
+#include <stdio.h>
+#include <stdlib.h>
+#include "ArrayBaseStack.h"
+
+/*
+topIndex = 0; 이 되버리면,
+가장 마지막 데이터가 0에 있단 뜻이기 때문에 헷갈리면 안된다!
+-1이 빈 상태를 의미하는 것!
+*/
+void StackInit(Stack* pstack)
+{
+    pstack->topIndex = -1;
+}
+
+int SIsEmpty(Stack* pstack)
+{
+    if (pstack->topIndex == -1)
+        return TRUE;
+    else
+        return FALSE;
+}
+
+void SPush(Stack* pstack, Data data)
+{
+    pstack->topIndex += 1;
+    pstack->stackArr[pstack->topIndex] = data;
+}
+
+Data SPop(Stack* pstack)
+{
+    int rIdx;
+
+    if (SIsEmpty(pstack))
+    {
+        printf("Stack Memory Error!");
+        exit(-1); // 바로 프로그램 종료. stdlib.h  
+    }
+
+    rIdx = pstack->topIndex;
+    pstack->topIndex -= 1; // 사실 배열안에 실제로 데이터는 들어있겠지, 하지만 topIndex기준으로 데이터를 판단하므로, 삭제 했다고 보는 것임. 
+
+    return pstack->stackArr[rIdx];
+}
+
+/*
+스택의 top 데이터를 확인만 하고, 없애고 싶진 않을 때.
+*/
+Data SPeek(Stack* pstack)
+{
+    if (SIsEmpty(pstack))
+    {
+        printf("Stack Memory Error!");
+        exit(-1);
+    }
+
+    return pstack->stackArr[pstack->topIndex];
+}
+
+
