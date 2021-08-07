@@ -1,0 +1,94 @@
+/*
+- DLinkedListMain.c, DLinkedList.c, DlinkedList.h source code 복습&이해
+  - 저번 시간 코드 참조.
+
+> 리스트(List) : DONE
+  - 배열(순차) 리스트
+  - 링크드 리스트
+    - 선형 구조
+    - 입력 순서 == 저장 순서 보장 X
+    - 결국, 탐색을 위해선 n번 돌아야 함.
+    - BigO(N)
+
+
+> 스택(Stack)
+   - FILO(First-IN Last-Out) : 먼저 들어간게, 나중에 나온다.
+     LIFO(Last-IN First-Out)
+
+   - 스택 자체는 간단하지만, 스택 기반 알고리즘을 익히는 것은 노력이 필요함.
+
+   - 스택 ADT
+     - void StackInit(Stack* pstack);
+       - 스택 초기화
+       - 스택 생성 후 제일 먼저 호출 되어야 하는 함수.
+
+     - int SIsEmpty(Stack* pstack);
+       - 스택이 빈 경우 true(1), 그렇지 않으면 false(0) 반환
+
+     - void SPush(Stack* stack, Data data);
+       - 스택에 매개변수 data로 전달된 값을 저장.
+
+     - Data SPop(Stack* pstack);
+       - 마지막에 저장된 요소를 삭제.
+       - 삭제된 데이터는 반환
+       - 데이터가 하나 이상 존재함이 보장되어야 함.
+
+     - Data SPeek(Stack* pstack);
+       - 마지막에 저장된 요소를 반환, 하지만 삭제하진 않는다.
+       - 데이터가 하나 이상 존재함이 보장되어야 함.
+
+    - 스택의 구현
+      - 배열 기반 스택
+      - 링크드리스트 기반 스택
+        => 리스트는 다른 자료구조 구현에 사용되는 도구이기도 함.
+
+> 스택 - 배열 기반 구현
+  - [0][1][2][3]
+  - [0]을 바닥으로 보자.
+  - topIndex는 가장 최근에 저장된, 다시 말해 가장 위에 저장된 데이터를 가리키는 인덱스 변수.
+    - push : topIndex를 위로 한칸 올리고, topIndex가 가리키는 위치에 데이터 저장
+    - pop  : topIndex가 가리키는 데이터를 반환하고, topIndex를 아래로 한칸 내림.
+
+  - 이해하기
+    - ArrayBaseStack.h
+    - ArrayBaseStack.c
+    - ArrayBaseStackMain.c
+
+
+>스택 - 연결 리스트 기반 구현
+  - head -> [2] -> [4] -> [6] -> [8]
+    - data를 head에 삽입
+    - 데이터 뺄 때, head에서 뺌.
+
+  - 이해하기
+    - ListBaseStack.h
+    - ListBaseStack.c
+    - ListBaseStackMain.c
+
+
+> 스택 활용 - 계산기 프로그램 구현
+  -
+
+
+
+> 큐(Queue)
+
+> 우선순위 큐(Priority Queue) & 힙(Heap)
+
+> 트리(Tree)
+
+> 그래프(Graph)
+  - 표현
+    - 인접행렬
+    - 인접리스트
+
+  - 탐색
+    - DFS (깊이 우선)
+      - 스택, 재귀함수
+    - BFS (너비 우선)
+      - 큐
+---------------------------------------
+> 정렬(Sorting)
+> 탐색(Search)
+> 테이블(Table)/해쉬(Hash) - 요즘 좀 핫한.
+*/
