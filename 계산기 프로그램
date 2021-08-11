@@ -1,0 +1,436 @@
+*****45main.c
+
+/*
+> 스택 활용 - 계산기 프로그램 구현
+
+  1단계) 중위 -> 후위 변환 프로그램 구현 (44 project 복습.)
+    - InfixToPostfix.h // ConvToRPNExp 함수 선언
+    - InfixToPostfix.c // ConvToRPNExp 함수 정의
+    - ListBaseStack.h // 스택 활용
+    - ListBaseStack.c
+
+
+  2-1단계) 후위 표기법 수식의 계산방법
+       ex) 3 2 4 * +
+         - 먼저 연산 되어야 하는 연산자가 수식들 앞쪽에 위치함.
+           - 따라서, * -> +
+         - 후위 표기법의 수식에서는 연산자의 앞에 등장하는 두 개의 숫자가 피연산자임.
+           - 3 "2 4 *" +
+           - "3 8 +"
+           - 11
+
+       ex) 1 2 * 3 + 4 /
+         - 수식 젤 앞이 * 이므로, * 부터 연산한다.
+         - "1 2 *" 3 + 4 /
+         - 2 3 + 4 /
+         - 5 4 /
+         - 1.25 // double형 변수, if 정수형 -> 1
+
+
+ex3) 다음 후위 표기법의 수식을 계산해보자
+     1) 4 2 * 8 +
+     2) 1 2 3 + * 4 /
+
+
+  2-2단계) 후위 표기법 수식의 계산구현
+    1) 피연산자(숫자)는 무조건 스택으로 옮긴다.
+    2) 연산자 만나면, 스택에서 두 개의 숫자 꺼내서 계산한다.
+    3) 계산 결과를 다시 스택에 넣는다. 
+
+    ex) [3][2][4][*][+] 
+
+      1) [ ][ ][ ][*][+] 
+         [3][2][4] (스택)
+
+         - 3,2,4 모두 피연산자이니, 스택에 Push
+       
+      2) [ ][ ][ ][ ][+] 
+         [3][8] (스택)
+
+         - 이제 *를 처리할 차례. 
+         - 스택에서 두 개의 숫자 꺼내서 연산 진행 후에, 다시 스택에 집어 넣기.
+         - 여기서 4와 2를 꺼내 진행이 되는 연산은 아래와 같다.
+           즉, 먼저 꺼낸 숫자가 오른쪽, 나중에 꺼낸 숫자가 왼쪽에 위치한다. (덧셈, 뺄셈에서 중요.)
+           - 2 * 4 (4 * 2 가 아니다.)
+
+      3) [ ][ ][ ][ ][ ] 
+         [11][ ] (스택)
+
+
+    - PostCalculator.h     // EvalRPNExp 함수 선언
+    - PostCalculator.c     // EvalRPNExp 함수 정의
+    - PostCalculatorMain.c // 후위 표현식 계산 테스트 메인
+    - ListBaseStack.h      // 스택 활용
+    - ListBaseStack.c
+    
+    > 최종 프로그램 
+      - main 함수 : InfixCalculatorMain.c
+      - 스택 활용 : ListBaseStack.h, ListBaseStack.c
+      - 중위 표기법 수식 계산 : InfixCalculator.h, InfixCalculator.c
+        - EvalInfixExp();
+          - 후위 표기법으로 변환  : InfixToPostfix.h, InfixToPostfix.c
+            - ConvToRPNExp();
+          - 후위 표기법 수식 계산 : PostCalculator.h, PostCalculator.c
+            - EvalRPNExp();
+      
+      
+
+> 큐(Queue)
+> 우선순위 큐(Priority Queue) & 힙(Min/Max Heap)
+> 트리(Tree)
+> 그래프(Graph)
+  - 표현
+    - 인접행렬
+    - 인접리스트
+  - 탐색
+    - DFS (깊이 우선)
+      - 스택, 재귀함수
+    - BFS (너비 우선)
+      - 큐
+---------------------------------------
+> 정렬(Sorting)
+> 탐색(Search)
+> 테이블(Table)/해쉬(Hash)
+*/
+
+ > 최종 프로그램 
+      - main 함수 : InfixCalculatorMain.c
+      - 스택 활용 : ListBaseStack.h, ListBaseStack.c
+      - 중위 표기법 수식 계산 : InfixCalculator.h, InfixCalculator.c
+        - EvalInfixExp();
+          - 후위 표기법으로 변환  : InfixToPostfix.h, InfixToPostfix.c
+            - ConvToRPNExp();
+          - 후위 표기법 수식 계산 : PostCalculator.h, PostCalculator.c
+            - EvalRPNExp();
+            
+******* InfixCalculatorMain.c
+
+#include <stdio.h>
+#include "InfixCalculator.h"
+
+int main(void)
+{
+   char exp1[] = "1+2*3";
+   char exp2[] = "(1+2)*3";
+   char exp3[] = "((1-2)+3)*(5-2)";
+
+   printf("%s = %d \n", exp1, EvalInfixExp(exp1));
+   printf("%s = %d \n", exp2, EvalInfixExp(exp2));
+   printf("%s = %d \n", exp3, EvalInfixExp(exp3));
+
+   return 0;
+}
+
+******InfixCalculator.h
+
+#ifndef __INFIX_CALCULATOR__
+#define __INFIX_CALCULATOR__
+
+int EvalInfixExp(char exp[]);
+
+#endif
+
+******InfixCalculator.c
+
+#include <string.h>
+#include <stdlib.h>
+#include "InfixToPostfix.h"
+#include "PostCalculator.h"
+
+#pragma warning(disable:4996)
+
+int EvalInfixExp(char exp[])
+{
+   int len = strlen(exp);
+   int ret;
+   char * expcpy = (char*)malloc(len+1);
+   strcpy(expcpy, exp);
+
+   ConvToRPNExp(expcpy);     // (1) 후위 표기법 변환
+   ret = EvalRPNExp(expcpy); // (2) 후위 표기법 계산
+
+   free(expcpy);
+   return ret;
+}
+
+*******InfixToPostfix.h
+
+#ifndef __INFIX_TO_POSTFIX_H__
+#define __INFIX_TO_POSTFIX_H__
+
+void ConvToRPNExp(char exp[]);
+
+#endif
+
+
+*******InfixToPostfix.c
+
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include "ListBaseStack.h"
+
+#pragma warning(disable:4996)
+
+int GetOpPrec(char op)
+{
+   switch(op)
+   {
+   case '*':
+   case '/':
+      return 5; // 가장 높은 우선순위
+   case '+':
+   case '-':
+      return 3; // 5보단 작고, 1보단 큰 우선순위
+   case '(':
+      return 1; // 가장 낮은 우선순위
+   }
+
+   return -1;   // 등록되지 않은 연산자
+}
+
+int WhoPrecOp(char op1, char op2)
+{
+   int op1Prec = GetOpPrec(op1);
+   int op2Prec = GetOpPrec(op2);
+
+   if (op1Prec > op2Prec) // op1의 우선순위가 더 높다면
+      return 1;
+   else if (op1Prec < op2Prec) // op2의 우선순위가 더 높다면
+      return -1;
+   else
+      return 0; // op1과 op2의 우선순위가 같다면
+}
+/*
+중위 -> 후위로 변환하는 함수
+후위 표기법의 다른 이름 : "Reverse Polish Notation"
+*/
+void ConvToRPNExp(char exp[])
+{
+   Stack stack;
+   int expLen = strlen(exp);
+   char* convExp = (char*)malloc(expLen + 1); // 변환된 수식을 담을 공간 할당.
+
+   int i, idx = 0;
+   char tok, popOp;
+
+   memset(convExp, 0, sizeof(char) * expLen + 1); // 메모리 초기화 함수. convExp 공간을 '0'으로 sizeof(char)*expLen+1 길이 만큼 초기화 시키는 것. 
+   StackInit(&stack);
+
+   /*   Main Logic 
+   1. exp(중위) 녀석을 len까지 돈다.
+      1.1 exp[idx]가 숫자면, 변환(후위 표기)배열에 넣는다.
+      1.2 exp[idx]가 연산자면, 스택에 넣는다.
+         1.2.1 내가 제일 높다면, 스택에 바로 넣는다.
+         1.2.2 만약, 지금 들어온 연산자가, 안에 있는 연산자보다 낮다면, 스택에 있는 연산자를 모두(나보다 높은새키들) 변환수식에 넣는다.  // 여기가 좀 애매함..
+         1.2.2 그리고, 지금 들어온 연산자를 스택에 넣는다. 
+   
+   2. 스택에 남아있는 연산자를 변환 수식에 넣는다. (스택 다 비워질때까지)
+   */
+   for (i = 0; i < expLen; i++)
+   {
+      tok = exp[i];
+
+      if (isdigit(tok))
+      {
+         convExp[idx] = tok;
+         idx++;
+      }
+      else // exp[idx]가 연산자면, 스택에 넣는다.
+      {
+         if (SIsEmpty(&stack)) //처음 들어온 연산자
+         {
+            SPush(&stack,tok);
+         }
+         else//만약 비어 있지 않으면 pop연산자와  tok연산자와 우선순위 비교 해서 높다면 SPush, 낮다면 while(SISempty)까지 poo해서 배열에 넣고 spush
+         {
+            if (WhoPrecOp(SPeek(&stack), tok)> 0)
+            {
+               SPush(&stack, tok);
+            }
+            else
+            {
+               while (!SIsEmpty(&stack))
+               {
+                  convExp[idx++] = SPop(&stack);
+               }
+               SPush(&stack, tok);
+            }
+         }
+      }
+   }
+
+   while (!SIsEmpty(&stack))
+   {
+      convExp[idx++] = SPop(&stack);
+   }
+
+   strcpy(exp, convExp);
+   free(convExp);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//void ConvToRPNExp(char exp[])
+//{
+//   Stack stack;
+//   int expLen = strlen(exp);
+//   char* convExp = (char*)malloc(expLen + 1); // 변환된 수식을 담을 공간 할당.
+//
+//   int i, idx = 0;
+//   char tok, popOp;
+//
+//   memset(convExp, 0, sizeof(char) * expLen + 1); // 메모리 초기화 함수. convExp 공간을 '0'으로 sizeof(char)*expLen+1 길이 만큼 초기화 시키는 것. 
+//   StackInit(&stack);
+//
+//   for (i = 0; i < expLen; i++)
+//   {
+//      tok = exp[i]; // 전달된 중위 표기법 수식(exp)을 한 문자씩 tok에 저장. 
+//
+//      if (isdigit(tok)) // tok에 저장된 문자가 (10진수)숫자면 true(1) 반환.
+//      {
+//         convExp[idx++] = tok; // 숫자면 convExp 배열에 바로 저장. 
+//      }
+//      else
+//      {
+//         switch (tok)
+//         {
+//         case '(':            // 여는 소괄호라면, 
+//            SPush(&stack, tok); // 스택에 쌓기.
+//            break;
+//
+//         case ')':            // 닫는 소괄호라면,
+//            while (1)         // 반복해서,
+//            {
+//               popOp = SPop(&stack);   // 스택에서 연산자 꺼내서
+//               if (popOp == '(')       // ( 만날때까지
+//                  break;
+//               convExp[idx++] = popOp; // 배열 convExp 에 저장. 
+//            }
+//            break;
+//
+//         case '+': case '-':
+//         case '*': case '/':
+//            while (!SIsEmpty(&stack) && WhoPrecOp(SPeek(&stack), tok) >= 0) // (1) 스택이 안비어있고 (2) 현재 tok보다, stack에 있는 연산자가 더 우선순위 높다면, 
+//               convExp[idx++] = SPop(&stack); // POP해서 convExp에 넣기. 
+//
+//            SPush(&stack, tok); // (POP을 했든, 안했든) 현재 tok을 넣을 stack의 위치를 찾았으니, 넣자.
+//            break;
+//         }
+//      }
+//   }
+//
+//   while (!SIsEmpty(&stack))         // 스택에 남아있는 모든 연산자를,
+//      convExp[idx++] = SPop(&stack);  // 배열 convExp로 이동
+//
+//   strcpy(exp, convExp); // 변환된 수식을 exp에 복사하고,
+//   free(convExp);        // convExp는 동적해제.
+//}
+
+********PostCalculator.h
+
+#ifndef __POST_CALCULATOR_H__
+#define __POST_CALCULATOR_H__
+
+int EvalRPNExp(char exp[]);
+
+#endif
+
+*******PostCalculator.c
+
+#include <string.h>
+#include <ctype.h>
+#include "ListBaseStack.h"
+
+/* 후위 표기법을 계산하고 그 결과를 반환 */
+int EvalRPNExp(char exp[])
+{
+   Stack stack;
+   int expLen = strlen(exp);
+   int i;
+   char tok, op1, op2;
+
+   StackInit(&stack);
+
+   /* 
+   1. exp[](후위 표기법 배열)을 0 ~ len 돌아야한다.
+     1.1 exp[idx]가 숫자면, 스택에 넣는다.
+     1.2 exp[idx]가 연산자면, 스택에서 숫자 2개빼서, 계산해서, 스택에 넣는다.
+   */
+   for (i = 0; i < expLen; i++) //0 ~ len 돌아야한다.
+   {
+      tok = exp[i];
+
+      if (isdigit(tok))
+      {
+         SPush(&stack, tok - '0');
+      }
+      else //연산자면
+      {
+         op2 = SPop(&stack);
+         op1 = SPop(&stack);
+
+         switch(tok)
+         {
+            case '+':
+               SPush(&stack, op1 + op2);
+               break;
+            case '-' :
+               SPush(&stack, op1 - op2);
+               break;
+            case '*':
+               SPush(&stack, op1 * op2);
+               break;
+            case '/':
+               SPush(&stack, op1 / op2);
+               break;
+         }
+      }
+   }
+
+   return SPop(&stack); // 마지막 연산 결과가 스택에 있다. 이를 반환.
+}
+
+******ListBaseStack.h
+******ListBaseStack.c
