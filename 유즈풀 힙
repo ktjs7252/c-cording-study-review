@@ -1,0 +1,69 @@
+<UsefulHeap.h>
+#ifndef __USEFUL_HEAP_H__
+#define __USEFUL_HEAP_H__
+
+#define TRUE   1
+#define FALSE   0
+
+#define HEAP_LEN   100
+
+typedef char HData;
+typedef int PriorityComp(HData d1, HData d2);
+
+typedef struct _heap
+{
+   PriorityComp * comp;
+   int numOfData;
+   HData heapArr[HEAP_LEN];
+} Heap;
+
+void HeapInit(Heap * ph, PriorityComp pc);
+int HIsEmpty(Heap * ph);
+
+void HInsert(Heap * ph, HData data);
+HData HDelete(Heap * ph);
+
+#endif
+
+----------------------------------------
+
+<PriorityQueue.c>
+#include "PriorityQueue.h"
+#include "UsefulHeap.h"
+
+void PQueueInit(PQueue * ppq, PriorityComp pc)
+{
+   HeapInit(ppq, pc);
+}
+
+int PQIsEmpty(PQueue * ppq)
+{
+   return HIsEmpty(ppq);
+}
+
+void PEnqueue(PQueue * ppq, PQData data)
+{
+   HInsert(ppq, data);
+}
+
+PQData PDequeue(PQueue * ppq)
+{
+   return HDelete(ppq);
+}
+----------------------------------------------
+<PriorityQueue.h>
+#ifndef __PRIORITY_QUEUE_H__
+#define __PRIORITY_QUEUE_H__
+
+#include "UsefulHeap.h"
+
+typedef Heap PQueue;
+typedef HData PQData;
+
+void PQueueInit(PQueue * ppq, PriorityComp pc);
+int PQIsEmpty(PQueue * ppq);
+
+void PEnqueue(PQueue * ppq, PQData data);
+PQData PDequeue(PQueue * ppq);
+
+#endif
