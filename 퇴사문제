@@ -1,0 +1,369 @@
+10/26(화) 수업자료!
+/*
+> (DP) BOJ 14051번 퇴사 (2017년 상반기 삼성전자 CE/IM 기출)
+  - solution 1) DFS
+  - solution 2) DP
+    hint : DP[5] : 5일날에 벌 수있는 pay의 최대값이.
+
+
+> (DP) BOJ 11052번 카드 구매하기
+  - solution 1) DP 
+
+
+> (DP) BOJ 1904번 01타일
+  - solution 1) DP 
+    - 주의할 점은 % mod를 해서 DP 배열에 저장해야 한다는 것!
+
+
+> (DP) BOJ 2133번 타일 채우기
+  - solution 1) DP 
+    - 직접 해보며 규칙(점화식)을 찾는 것이 중요!!
+
+
+---------------------------------------------------------->
+> (DP) BOJ 1915번 가장 큰 정사각형 (GOLD 4)
+
+
+> (DP) BOJ 1256번 사전 (GOLD 3)
+
+
+> (DP) BOJ 2629번 양팔저울 (GOLD 2)
+ 
+*/
+
+//#include <stdio.h>
+//#pragma warning(disable:4996)
+//
+//int map[1001][1001];
+//int N,M;
+//int MAX;
+//int dp[1001][1001]; // DP[x][y] : 
+//
+//int solve(int x, int y)
+//{
+//   int i, j;
+//
+//   if (map[x][y] == 0) //탈락
+//   {
+//      return 0;
+//   }
+//   //여까지 왔으면 1임
+//   dp[x][y] = 1;
+//
+//   for (i = x; i < N; i++)
+//   {
+//      for (j = y; j < M; j++)
+//      {
+//         if(map[x][)
+//      }
+//   }
+//   return dp[x][y];
+//}
+//// j+1하면서 0이 나올때까지
+//// j+1이 1이면 i+1도해서 한번더 for문
+//// max값을 dp에 리턴
+//
+//int main(void)
+//{
+//   int i, j;
+//
+//   scanf("%d %d", &N, &M);
+//
+//   for (i = 0; i < N; i++)
+//   {
+//      for (i = 0; i < M; j++)
+//      {
+//         scanf("%1d", &map[i][j]);
+//      }
+//   }
+//
+//   for (i = 0; i < N; i++)
+//   {
+//      for (j = 0; j < M; j++)
+//      {
+//         dp[i][j]=solve(i, j);
+//      }
+//   }
+//
+//}
+
+#include <stdio.h>
+#pragma warning(disable:4996)
+int n, m;
+int map[1002][1002];
+
+#define min(x,y) x < y ? x : y
+
+int main(void)
+{
+   int i, j;
+   int ret = 0; 
+
+   scanf("%d %d", &n, &m);
+   for (i = 1; i <=n; i++)
+   {
+      for (j = 1; j <= m; j++)
+      {
+         scanf("%1d", &map[i][j]);
+      }
+   }
+
+   /*
+   ex) (1,1) 
+       -> (1,0) 왼쪽
+         (i, j-1)
+
+      -> (0,0) 왼쪽 대각선
+         (i-1, j-1)
+
+      -> (0,1)
+         (i-1, j)
+   */
+   for (i = 1; i <= n; i++)
+   {
+      for (j = 1; j <= m; j++)
+      {
+         if (map[i][j] != 0)
+         {
+            map[i][j] = min(map[i - 1][j - 1], Min(map[i - 1][j], map[i][j - 1])) + 1;
+         }
+         if (ret < map[i][j])
+         {
+            ret = map[i][j];
+         }
+      }
+   }
+
+   printf("%d\n", ret*ret);
+
+   return 0;
+}
+
+
+
+
+
+
+/* > BOJ 14051번 퇴사 - DFS
+* 
+* 
+
+include <stdio.h>
+
+int n; // 1 ~ 15
+int day[16]
+int cost[16];
+int answer = -1;
+
+#define max(a,b) a>b ? a : b
+
+void dfs(int d, int sum)
+{
+   if (d >= n+1) // 초과
+   {
+      answer = max(answer, sum);
+      return;
+   }
+
+   // d일 상담 한다.
+   if (d + day[d] <= n+1)
+      dfs(d + day[d], sum + cost[d]);
+
+   // d일 상담 안한다.
+   if (d+1 <= n+1)
+      dfs(d + 1, sum);
+}
+int main(void)
+{
+   scanf("%d", &n);
+   for (int i = 1; i <= n; i++)
+   {
+      scanf("%d %d", &day[i], &cost[i]);
+   }
+
+   dfs(1, 0);
+
+   printf("%d\n", answer);
+
+   return 0;
+}
+*/
+
+
+/* >BOJ 14051번 퇴사 - DP
+* 
+* 
+#include <stdio.h>
+
+int day[16];
+int cost[16];
+int dp[16]; // dp[N] : N번째 날짜에 얻을 수 있는 최대 이익.
+
+#define max(a,b) a>b ? a : b
+
+int main(void)
+{
+   int i, n, answer = 0;
+
+   scanf("%d", &n);
+   for (i = 1; i <= n; i++)
+   {
+      scanf("%d %d", &day[i], &cost[i]);
+   }
+
+   for(i = 1 ; i <= n ; i++)
+   {
+      int ok_book = i + day[i]; // 상담 날짜 예약 하는 경우
+      int no_book = i + 1; // 상담 날짜 예약하지 않는 경우
+
+      // 퇴사 날짜 전일때, 예약 할 경우 vs 안할 경우 각각 최대값 구하기.
+      if (ok_book <= n + 1) 
+        dp[ok_book] = max(dp[ok_book], dp[i] + cost[i]);
+      if (no_book <= n + 1) 
+        dp[no_book] = max(dp[no_book], dp[i]);
+
+      answer = max(max(answer, dp[ok_book]), dp[no_book]);
+   }
+
+   printf("%d\n", answer);
+
+   return 0;
+}
+*/
+
+
+
+/* > BOJ 11052번 카드 구매하기
+* 
+* 
+#include <stdio.h>
+
+#pragma warning(disable:4996)
+
+int N;
+int P[10001];
+int D[10001];
+
+int main(void)
+{
+   scanf("%d", &N);
+   for (int i = 1; i <= N; i++)
+      scanf("%d", &P[i]);
+
+   // D[i] = i개 구매 했을 때의 최대 가격
+   // D[i] = MAX(D[i-j] + P[j])
+
+   for (int i = 1; i <= N; i++)
+   {
+      for (int j = 1; j <= i; j++)
+      {
+         if (D[i] < D[i - j] + P[j])
+            D[i] = D[i - j] + P[j];
+      }
+   }
+
+   printf("%d\n", D[N]);
+
+   return 0;
+}
+
+*/
+
+
+/* > BOJ 1904번 01타일
+* 
+N=1일 때, [1] - 1개
+N=2일 때, [00, 11] - 2개
+N=3일 때, [001, 100, 111] - 3개
+
+N=3일 때를 보면, 
+  - N(1)인 1 +"00"
+  - N(2)인 00 + "1", 11 + "1"
+  -> 그렇기 때문에 피보나치 수열을 따른다. D[n] = D[n-1] + D[n-2]
+
+N=4일 때, [0000, 0011, 1001, 1100, 1111] - 5개
+N=5일 때, [00001, 00100, 10000, 00111, 10011, 11001, 11100, 11111] - 8개
+* 
+#include <stdio.h>
+
+#define mod 15746
+
+int N;
+int D[1000001];
+
+int main(void)
+{
+   int i;
+   scanf("%d",&N);
+
+   D[1] = 1; D[2] = 2;
+   if(N <= 2)
+   {
+      printf("%d\n",D[N]);
+      return 0;
+   }
+
+   for(i=3 ; i<=N ; i++)
+   {
+      D[i] = (D[i-1] + D[i-2]) % mod;
+   }
+
+   printf("%d\n",D[N]);
+
+   return 0;
+}
+
+*/
+
+
+
+/* > BOJ 2133번 타일 채우기
+* 
+* 일단, 3 x N 의 타일이 있을 때,
+* N이 홀수인 경우는 절대 2x1, 1x2 타일로 채울 수 없다. 
+* -> 이건 직접 해보면 알 수 있는 것. 
+* 
+* N이 짝수일 경우만 생각해보자. 
+* N = 2일 경우 -> 3가지
+*  ||  ㅡ  〓
+   ㅡ  ||  ㅡ
+
+   이를 통해 일단, d[n] = 3*d[n-2] 를 찾을 수 있다. (오른쪽에 저 3가지 경우를 갖다 붙이면 되니까.)
+ 
+   이게 점화식의 끝일까? 이 외의 상황은 더 없을까? 
+   이는 결국 N = 4일때를 해봐야 알 수 있다. 
+   
+   d[0] = 1
+   d[2] = 3
+   d[4] = 3*d[2] + 2 
+     -> d[2] | d[2]
+    -> 
+
+   d[6] = 3*d[4] + ?
+     -> d[2] | d[4]
+    -> d[4] | d[2]
+
+#include <stdio.h>
+
+int n;
+int d[31]; // d[n] = 3*d[n-2] + 2*d[n-4] + 2*d[n-6] + ...
+
+int main(void)
+{
+   scanf("%d", &n);
+
+   d[0] = 1;
+   for (int i = 2; i <= n; i += 2)
+   {
+      d[i] = 3 * d[i - 2];
+      for (int j = i - 4; j >= 0; j -= 2)
+      {
+         d[i] += 2 * d[j];
+      }
+   }
+
+   printf("%d\n", d[n]);
+
+   return 0;
+}
+*/
