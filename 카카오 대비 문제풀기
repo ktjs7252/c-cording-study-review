@@ -1,0 +1,40 @@
+프로그래머스 소수만들기
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+// nums_len은 배열 nums의 길이입니다.
+int solution(int nums[], size_t nums_len) {
+    int answer = 0;
+    int sum;
+    int sign;
+    
+    for(int i=0;i<nums_len-2;i++)
+    {
+        for(int j=i+1;j<nums_len;j++)
+        {
+            for(int k=j+1;k<nums_len;k++)
+            {
+                sum=nums[i]+nums[j]+nums[k];
+                sign=1;
+                
+                for(int sosu=2;sosu<sum;sosu++)
+                {
+                    if(sum%sosu==0)
+                    {
+                        sign=-1;
+                        break;
+                    }
+                }
+                if(sign==1)
+                {
+                    answer++;
+                }
+            }
+        }
+        
+    }
+    
+    return answer;
+}
+
