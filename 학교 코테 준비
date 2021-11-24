@@ -69,3 +69,26 @@ int main(void)
 평형저울 공부해야함
 -------------------------------------------
 다익스트라 알고리즘을 c언어로 해볼수 있을까?
+--------------------------------------------
+문자열 뒤집기
+#include <stdio.h>
+int main() {
+	char arr[11];
+	char temp;
+	int length=0;
+	int i,idx=0;
+	scanf("%s",&arr);
+	
+	while(arr[length]!=NULL)
+	{
+		length++;
+	}
+	for (i = 0; i < length / 2; i++) {
+		temp = arr[i];
+		arr[i] = arr[length - i - 1];
+		arr[length - i - 1] = temp;
+	}
+	printf("%s",arr);
+	return 0;
+}
+
